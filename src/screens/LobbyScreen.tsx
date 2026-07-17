@@ -4,6 +4,8 @@ import { getGame } from '../games/registry'
 import type { GameId } from '../games/types'
 import { syncFuseDefaults } from '../games/fuse/store'
 import { syncImpostorDefaults } from '../games/impostor/store'
+import { syncSpyDefaults } from '../games/spy/store'
+import { syncHotSeatDefaults } from '../games/hotseat/store'
 import { useT } from '../i18n/useT'
 import type { MessageKey } from '../i18n/messages'
 import { useSession } from '../store/session'
@@ -15,6 +17,8 @@ import { cn } from '../lib/cn'
 const gameNameKey: Record<GameId, MessageKey> = {
   impostor: 'games.impostor.name',
   fuse: 'games.fuse.name',
+  spy: 'games.spy.name',
+  hotseat: 'games.hotseat.name',
 }
 
 export function LobbyScreen() {
@@ -47,6 +51,8 @@ export function LobbyScreen() {
     ensurePlayerCount(game.minPlayers, game.maxPlayers)
     if (selectedGameId === 'impostor') syncImpostorDefaults()
     if (selectedGameId === 'fuse') syncFuseDefaults()
+    if (selectedGameId === 'spy') syncSpyDefaults()
+    if (selectedGameId === 'hotseat') syncHotSeatDefaults()
     openSetup()
   }
 

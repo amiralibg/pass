@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
 
-export type GameId = 'impostor' | 'fuse'
+export type GameId = 'impostor' | 'fuse' | 'spy' | 'hotseat'
 
 export interface Player {
   id: string
@@ -16,7 +16,7 @@ export interface GameDefinition {
   maxPlayers: number
   /** Suggested default when opening the lobby */
   defaultPlayers: number
-  accent: 'gold' | 'spark'
+  accent: 'gold' | 'spark' | 'mint' | 'ember'
   Setup: ComponentType
   Play: ComponentType
 }

@@ -13,6 +13,8 @@ No accounts. No extra phones. Hand it over and play.
 |------|---------|------|
 | **Impostor** | 3–12 | Most players see a secret word. Impostors don’t. Talk, vote, catch them. |
 | **Fuse** | 2–12 | A live fuse with a secret timer. Answer the prompt, pass before it blows. |
+| **Spy** | 3–12 | Everyone gets a location + role — except the spy. Ask questions, vote them out. |
+| **Hot Seat** | 2–12 | Timed multiple-choice trivia. Take turns, highest score wins. |
 
 Built so new games plug into the same lobby — drop a folder under `src/games/` and register it.
 
@@ -58,6 +60,20 @@ Pick a game and start the night.
 2. Answer the prompt out loud  
 3. Pass it on — when it blows, that player loses a life  
 4. Last standing wins
+
+### Spy
+
+1. Choose a location pack + spy count  
+2. Pass the phone — crew sees a place + role; spies see only SPY  
+3. Ask questions about where you are (don’t say the place)  
+4. Vote who the spy is
+
+### Hot Seat
+
+1. Pick a question pack, questions each, and timer  
+2. Hand the phone to the player in the seat  
+3. Answer before time runs out — correct = +1  
+4. Highest score after everyone finishes wins
 
 ---
 

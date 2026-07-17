@@ -37,7 +37,7 @@ function aliveIds(lives: Record<string, number>, order: string[]) {
 
 function nextPrompt() {
   const locale = usePrefs.getState().locale
-  return pickFresh(getFusePrompts(locale), `fuse:prompt:${locale}`, 32)
+  return pickFresh(getFusePrompts(locale), `fuse:prompt:${locale}`, 80)
 }
 
 export const useFuse = create<FuseState>((set, get) => ({

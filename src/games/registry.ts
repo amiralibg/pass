@@ -3,6 +3,10 @@ import { ImpostorSetup } from './impostor/Setup'
 import { ImpostorPlay } from './impostor/Play'
 import { FuseSetup } from './fuse/Setup'
 import { FusePlay } from './fuse/Play'
+import { SpySetup } from './spy/Setup'
+import { SpyPlay } from './spy/Play'
+import { HotSeatSetup } from './hotseat/Setup'
+import { HotSeatPlay } from './hotseat/Play'
 
 /**
  * Game registry — add a new party game by appending here.
@@ -34,6 +38,32 @@ export const GAMES: GameDefinition[] = [
     accent: 'spark',
     Setup: FuseSetup,
     Play: FusePlay,
+  },
+  {
+    id: 'spy',
+    name: 'Spy',
+    tagline: 'One of you doesn’t know the location.',
+    description:
+      'Everyone gets a place and a role — except the spy. Ask questions, vote them out.',
+    minPlayers: 3,
+    maxPlayers: 12,
+    defaultPlayers: 6,
+    accent: 'mint',
+    Setup: SpySetup,
+    Play: SpyPlay,
+  },
+  {
+    id: 'hotseat',
+    name: 'Hot Seat',
+    tagline: 'Timed trivia. One phone. Pass when you’re done.',
+    description:
+      'Take turns answering multiple-choice questions against the clock. Highest score wins.',
+    minPlayers: 2,
+    maxPlayers: 12,
+    defaultPlayers: 4,
+    accent: 'ember',
+    Setup: HotSeatSetup,
+    Play: HotSeatPlay,
   },
 ]
 

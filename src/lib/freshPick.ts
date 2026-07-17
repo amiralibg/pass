@@ -28,8 +28,8 @@ function writeAll(map: HistoryMap) {
 export function pickFresh(
   items: string[],
   bucket: string,
-  /** How many recent picks to avoid — enough for 2–3 full party nights. */
-  remember = 28,
+  /** How many recent picks to avoid — enough for several party nights. */
+  remember = 48,
 ): string {
   if (items.length === 0) return ''
   if (items.length === 1) return items[0]!

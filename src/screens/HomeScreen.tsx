@@ -1,9 +1,15 @@
 import { motion } from 'motion/react'
 import { HelpCircle, Users } from 'lucide-react'
-import { FuseMark, ImpostorMark, PassMark } from '../components/icons/BrandMarks'
+import {
+  FuseMark,
+  HotSeatMark,
+  ImpostorMark,
+  PassMark,
+  SpyMark,
+} from '../components/icons/BrandMarks'
 import { HomeControls } from '../components/ui/HomeControls'
 import { GAMES } from '../games/registry'
-import type { GameId } from '../games/types'
+import type { GameDefinition, GameId } from '../games/types'
 import { useT } from '../i18n/useT'
 import type { MessageKey } from '../i18n/messages'
 import { useSession } from '../store/session'
@@ -14,16 +20,36 @@ import { cn } from '../lib/cn'
 const marks = {
   impostor: ImpostorMark,
   fuse: FuseMark,
+  spy: SpyMark,
+  hotseat: HotSeatMark,
 } as const
 
 const gameNameKey: Record<GameId, MessageKey> = {
   impostor: 'games.impostor.name',
   fuse: 'games.fuse.name',
+  spy: 'games.spy.name',
+  hotseat: 'games.hotseat.name',
 }
 
 const gameTaglineKey: Record<GameId, MessageKey> = {
   impostor: 'games.impostor.tagline',
   fuse: 'games.fuse.tagline',
+  spy: 'games.spy.tagline',
+  hotseat: 'games.hotseat.tagline',
+}
+
+function accentText(accent: GameDefinition['accent']) {
+  if (accent === 'spark') return 'text-spark'
+  if (accent === 'mint') return 'text-mint'
+  if (accent === 'ember') return 'text-ember'
+  return 'text-gold'
+}
+
+function accentPill(accent: GameDefinition['accent']) {
+  if (accent === 'spark') return 'bg-spark/20 text-spark'
+  if (accent === 'mint') return 'bg-mint/20 text-mint'
+  if (accent === 'ember') return 'bg-ember/20 text-ember'
+  return 'bg-gold/20 text-gold'
 }
 
 export function HomeScreen() {
@@ -87,7 +113,7 @@ export function HomeScreen() {
                     <p
                       className={cn(
                         'font-display text-2xl font-bold tracking-tight',
-                        game.accent === 'spark' ? 'text-spark' : 'text-gold',
+                        accentText(game.accent),
                       )}
                     >
                       {t(gameNameKey[game.id])}
@@ -106,9 +132,7 @@ export function HomeScreen() {
                   <span
                     className={cn(
                       'label-caps shrink-0 rounded-full px-3 py-1 text-xs font-semibold',
-                      game.accent === 'spark'
-                        ? 'bg-spark/20 text-spark'
-                        : 'bg-gold/20 text-gold',
+                      accentPill(game.accent),
                     )}
                   >
                     {t('home.play')}

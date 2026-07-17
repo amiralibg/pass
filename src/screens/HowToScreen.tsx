@@ -24,11 +24,26 @@ const HOW_TO_KEYS: Record<string, { title: MessageKey; steps: MessageKey[] }> = 
     title: 'howto.fuse.title',
     steps: ['howto.fuse.1', 'howto.fuse.2', 'howto.fuse.3', 'howto.fuse.4'],
   },
+  spy: {
+    title: 'howto.spy.title',
+    steps: ['howto.spy.1', 'howto.spy.2', 'howto.spy.3', 'howto.spy.4'],
+  },
+  hotseat: {
+    title: 'howto.hotseat.title',
+    steps: [
+      'howto.hotseat.1',
+      'howto.hotseat.2',
+      'howto.hotseat.3',
+      'howto.hotseat.4',
+    ],
+  },
 }
 
 const gameNameKey: Record<GameId, MessageKey> = {
   impostor: 'games.impostor.name',
   fuse: 'games.fuse.name',
+  spy: 'games.spy.name',
+  hotseat: 'games.hotseat.name',
 }
 
 export function HowToScreen() {

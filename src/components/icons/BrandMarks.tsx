@@ -98,6 +98,68 @@ export function FuseMark({ className, ...props }: IconProps) {
   )
 }
 
+export function HotSeatMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#FF8A4C" fillOpacity="0.12" />
+      {/* Spotlight seat */}
+      <path
+        d="M18 40c0-6 4.5-10 10-10s10 4 10 10"
+        stroke="#FF8A4C"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <circle cx="28" cy="22" r="6" fill="#FF8A4C" fillOpacity="0.35" stroke="#FF8A4C" strokeWidth="2.25" />
+      {/* Timer ticks */}
+      <path
+        d="M28 8v3M40 14l-2.2 2.2M16 14l2.2 2.2"
+        stroke="#E2B03A"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+export function SpyMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#3DDEB0" fillOpacity="0.12" />
+      {/* Map pin */}
+      <path
+        d="M28 12c-5.5 0-10 4.3-10 9.6 0 7.2 10 18.4 10 18.4s10-11.2 10-18.4C38 16.3 33.5 12 28 12z"
+        stroke="#3DDEB0"
+        strokeWidth="2.5"
+        fill="#3DDEB0"
+        fillOpacity="0.2"
+      />
+      <circle cx="28" cy="21.5" r="3.25" fill="#E8EEF8" />
+      {/* Question mark for the spy */}
+      <path
+        d="M42 38c0-2.2 1.6-3.5 3.4-3.5 1.7 0 3.1 1.1 3.1 2.8 0 1.4-1 2.1-2.1 2.8-.9.6-1.4 1.1-1.4 2.1v.4"
+        stroke="#FF5A45"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+      />
+      <circle cx="45.4" cy="46.2" r="1.35" fill="#FF5A45" />
+    </svg>
+  )
+}
+
 export function BombMark({ className, ...props }: IconProps) {
   return (
     <svg

@@ -3,9 +3,14 @@ import { pickFresh } from '../../lib/freshPick'
 import { shuffle } from '../../lib/shuffle'
 import { usePrefs } from '../../store/prefs'
 import { useSession } from '../../store/session'
-import { getPackWords, suggestedImpostorCount, WORD_PACKS } from './words'
+import {
+  getPackLocations,
+  LOCATION_PACKS,
+  suggestedSpyCount,
+  type LocationDef,
+} from './locations'
 
-export type ImpostorPhase =
+export type SpyPhase =
   | 'idle'
   | 'pass'
   | 'reveal'
@@ -13,13 +18,15 @@ export type ImpostorPhase =
   | 'vote'
   | 'result'
 
-interface ImpostorState {
-  phase: ImpostorPhase
+interface SpyState {
+  phase: SpyPhase
   packId: string
-  impostorCount: number
+  spyCount: number
   discussSeconds: number
-  secretWord: string
-  impostorIds: string[]
+  location: LocationDef | null
+  spyIds: string[]
+  /** playerId → role (spies omitted) */
+  rolesByPlayer: Record<string, string>
   revealIndex: number
   revealed: boolean
   discussEndsAt: number | null
@@ -27,12 +34,11 @@ interface ImpostorState {
   eliminatedId: string | null
 
   setPackId: (id: string) => void
-  setImpostorCount: (n: number) => void
+  setSpyCount: (n: number) => void
   setDiscussSeconds: (n: number) => void
   beginRound: () => void
   showReveal: () => void
   hideAndAdvance: () => void
-  startDiscuss: () => void
   goToVote: () => void
   castVote: (voterId: string, targetId: string) => void
   finishVote: () => void
@@ -42,18 +48,19 @@ interface ImpostorState {
 
 function defaultsFromPlayers(count: number) {
   return {
-    impostorCount: suggestedImpostorCount(count),
-    discussSeconds: count <= 5 ? 120 : count <= 8 ? 150 : 180,
+    spyCount: suggestedSpyCount(count),
+    discussSeconds: count <= 5 ? 150 : count <= 8 ? 180 : 210,
   }
 }
 
-export const useImpostor = create<ImpostorState>((set, get) => ({
+export const useSpy = create<SpyState>((set, get) => ({
   phase: 'idle',
-  packId: WORD_PACKS[0]!.id,
-  impostorCount: 1,
-  discussSeconds: 120,
-  secretWord: '',
-  impostorIds: [],
+  packId: LOCATION_PACKS[0]!.id,
+  spyCount: 1,
+  discussSeconds: 150,
+  location: null,
+  spyIds: [],
+  rolesByPlayer: {},
   revealIndex: 0,
   revealed: false,
   discussEndsAt: null,
@@ -61,24 +68,35 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
   eliminatedId: null,
 
   setPackId: (id) => set({ packId: id }),
-  setImpostorCount: (n) => set({ impostorCount: n }),
+  setSpyCount: (n) => set({ spyCount: n }),
   setDiscussSeconds: (n) => set({ discussSeconds: n }),
 
   beginRound: () => {
     const players = useSession.getState().players
     const locale = usePrefs.getState().locale
-    const { packId, impostorCount } = get()
-    const words = getPackWords(packId, locale)
-    const secretWord = pickFresh(words, `impostor:${packId}:${locale}`, 60)
-    const impostorIds = shuffle(players.map((p) => p.id)).slice(
+    const { packId, spyCount } = get()
+    const locations = getPackLocations(packId)
+    const locationIds = locations.map((l) => l.id)
+    const pickedId = pickFresh(locationIds, `spy:${packId}`, 40)
+    const location = locations.find((l) => l.id === pickedId) ?? locations[0]!
+
+    const spyIds = shuffle(players.map((p) => p.id)).slice(
       0,
-      Math.min(impostorCount, Math.max(1, players.length - 1)),
+      Math.min(spyCount, Math.max(1, players.length - 1)),
     )
+    const spySet = new Set(spyIds)
+    const crew = players.filter((p) => !spySet.has(p.id))
+    const rolePool = shuffle([...(location.roles[locale] ?? location.roles.en)])
+    const rolesByPlayer: Record<string, string> = {}
+    crew.forEach((p, i) => {
+      rolesByPlayer[p.id] = rolePool[i % rolePool.length]!
+    })
 
     set({
       phase: 'pass',
-      secretWord,
-      impostorIds,
+      location,
+      spyIds,
+      rolesByPlayer,
       revealIndex: 0,
       revealed: false,
       discussEndsAt: null,
@@ -104,12 +122,6 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
     set({ revealIndex: next, revealed: false, phase: 'pass' })
   },
 
-  startDiscuss: () =>
-    set({
-      phase: 'discuss',
-      discussEndsAt: Date.now() + get().discussSeconds * 1000,
-    }),
-
   goToVote: () => set({ phase: 'vote', votes: {} }),
 
   castVote: (voterId, targetId) => {
@@ -117,7 +129,7 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
   },
 
   finishVote: () => {
-    const { votes, impostorIds } = get()
+    const { votes } = get()
     const tallies = new Map<string, number>()
     Object.values(votes).forEach((target) => {
       tallies.set(target, (tallies.get(target) ?? 0) + 1)
@@ -134,7 +146,6 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
       }
     })
 
-    void impostorIds
     set({ phase: 'result', eliminatedId })
   },
 
@@ -143,10 +154,11 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
     const d = defaultsFromPlayers(count)
     set({
       phase: 'idle',
-      impostorCount: d.impostorCount,
+      spyCount: d.spyCount,
       discussSeconds: d.discussSeconds,
-      secretWord: '',
-      impostorIds: [],
+      location: null,
+      spyIds: [],
+      rolesByPlayer: {},
       revealIndex: 0,
       revealed: false,
       discussEndsAt: null,
@@ -161,11 +173,12 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
     const d = defaultsFromPlayers(count)
     set({
       phase: 'idle',
-      packId: WORD_PACKS[0]!.id,
-      impostorCount: d.impostorCount,
+      packId: LOCATION_PACKS[0]!.id,
+      spyCount: d.spyCount,
       discussSeconds: d.discussSeconds,
-      secretWord: '',
-      impostorIds: [],
+      location: null,
+      spyIds: [],
+      rolesByPlayer: {},
       revealIndex: 0,
       revealed: false,
       discussEndsAt: null,
@@ -175,11 +188,11 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
   },
 }))
 
-export function syncImpostorDefaults() {
+export function syncSpyDefaults() {
   const count = useSession.getState().players.length
   const d = defaultsFromPlayers(count)
-  useImpostor.setState({
-    impostorCount: d.impostorCount,
+  useSpy.setState({
+    spyCount: d.spyCount,
     discussSeconds: d.discussSeconds,
   })
 }
