@@ -14,7 +14,7 @@ export function TopBar({ title, onBack, right, className }: TopBarProps) {
     <header className={cn('mb-6 flex items-center gap-3', className)}>
       {onBack ? (
         <IconButton aria-label="Go back" onClick={onBack}>
-          <ArrowLeft className="size-5" strokeWidth={2.25} />
+          <ArrowLeft className="size-5 rtl:rotate-180" strokeWidth={2.25} />
         </IconButton>
       ) : (
         <span className="size-11" />

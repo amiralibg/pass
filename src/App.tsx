@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
+import { PrefsSync } from './components/PrefsSync'
 import { getGame } from './games/registry'
 import { useSession } from './store/session'
 import { HomeScreen } from './screens/HomeScreen'
@@ -14,21 +15,24 @@ export default function App() {
   const Play = game?.Play
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={screen + (selectedGameId ?? '')}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className="min-h-dvh"
-      >
-        {screen === 'home' && <HomeScreen />}
-        {screen === 'lobby' && <LobbyScreen />}
-        {screen === 'howto' && <HowToScreen />}
-        {screen === 'setup' && Setup && <Setup />}
-        {screen === 'play' && Play && <Play />}
-      </motion.div>
-    </AnimatePresence>
+    <>
+      <PrefsSync />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={screen + (selectedGameId ?? '')}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="min-h-dvh"
+        >
+          {screen === 'home' && <HomeScreen />}
+          {screen === 'lobby' && <LobbyScreen />}
+          {screen === 'howto' && <HowToScreen />}
+          {screen === 'setup' && Setup && <Setup />}
+          {screen === 'play' && Play && <Play />}
+        </motion.div>
+      </AnimatePresence>
+    </>
   )
 }

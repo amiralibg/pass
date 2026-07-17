@@ -1,5 +1,6 @@
 import { useFuse } from './store'
 import { useSession } from '../../store/session'
+import { useT } from '../../i18n/useT'
 import { Button } from '../../components/ui/Button'
 import { Screen } from '../../components/ui/Screen'
 import { Stepper } from '../../components/ui/Stepper'
@@ -9,6 +10,7 @@ export function FuseSetup() {
   const players = useSession((s) => s.players)
   const backToLobby = useSession((s) => s.backToLobby)
   const startPlay = useSession((s) => s.startPlay)
+  const t = useT()
 
   const livesEach = useFuse((s) => s.livesEach)
   const minSeconds = useFuse((s) => s.minSeconds)
@@ -27,30 +29,32 @@ export function FuseSetup() {
   return (
     <Screen>
       <TopBar
-        title="Fuse"
+        title={t('games.fuse.name')}
         onBack={() => {
           reset()
           backToLobby()
         }}
       />
 
-      <h2 className="font-display text-3xl font-bold tracking-tight">Round setup</h2>
+      <h2 className="font-display text-3xl font-bold tracking-tight">
+        {t('fuse.setup.title')}
+      </h2>
       <p className="mt-2 text-fog-dim">
-        {players.length} players · one secret fuse for the whole hot-potato run.
+        {t('fuse.setup.summary', { count: players.length })}
       </p>
 
       <div className="mt-8 space-y-2">
         <Stepper
-          label="Lives each"
-          hint="Lose one when the fuse blows in your hands"
+          label={t('fuse.setup.lives')}
+          hint={t('fuse.setup.livesHint')}
           value={livesEach}
           min={1}
           max={5}
           onChange={setLivesEach}
         />
         <Stepper
-          label="Shortest fuse"
-          hint="Minimum seconds before it can blow"
+          label={t('fuse.setup.shortest')}
+          hint={t('fuse.setup.shortestHint')}
           value={minSeconds}
           min={8}
           max={Math.max(8, maxSeconds - 3)}
@@ -58,8 +62,8 @@ export function FuseSetup() {
           onChange={setMinSeconds}
         />
         <Stepper
-          label="Longest fuse"
-          hint="Maximum seconds before it can blow"
+          label={t('fuse.setup.longest')}
+          hint={t('fuse.setup.longestHint')}
           value={maxSeconds}
           min={minSeconds + 3}
           max={60}
@@ -70,7 +74,7 @@ export function FuseSetup() {
 
       <div className="mt-auto pt-8">
         <Button className="w-full" size="xl" variant="danger" onClick={start}>
-          Light the fuse
+          {t('fuse.setup.start')}
         </Button>
       </div>
     </Screen>

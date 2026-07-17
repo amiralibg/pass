@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { createId } from '../lib/id'
 import type { AppScreen, GameId, Player } from '../games/types'
+import type { Locale } from './prefs'
+import { usePrefs } from './prefs'
 
 interface SessionState {
   screen: AppScreen
@@ -21,14 +23,38 @@ interface SessionState {
   removePlayer: (id: string) => void
   renamePlayer: (id: string, name: string) => void
   ensurePlayerCount: (min: number, max: number, preferred?: number) => void
+  remapDefaultNames: (locale: Locale) => void
 }
 
-const defaultNames = ['Alex', 'Sam', 'Jordan', 'Riley', 'Casey', 'Quinn', 'Morgan', 'Avery', 'Reese', 'Blake']
+const DEFAULT_NAMES: Record<Locale, string[]> = {
+  en: ['Alex', 'Sam', 'Jordan', 'Riley', 'Casey', 'Quinn', 'Morgan', 'Avery', 'Reese', 'Blake'],
+  fa: ['آریا', 'سارا', 'نیما', 'مینا', 'پارسا', 'رها', 'کیان', 'نیکا', 'آوا', 'سینا'],
+}
+
+function namesFor(locale?: Locale) {
+  return DEFAULT_NAMES[locale ?? bootLocale()] ?? DEFAULT_NAMES.en
+}
+
+function bootLocale(): Locale {
+  try {
+    const raw = localStorage.getItem('pass-prefs')
+    const locale = raw ? (JSON.parse(raw) as { state?: { locale?: Locale } }).state?.locale : null
+    return locale === 'fa' ? 'fa' : 'en'
+  } catch {
+    return 'en'
+  }
+}
+
+function fallbackName(locale: Locale, index: number) {
+  return locale === 'fa' ? `بازیکن ${index + 1}` : `Player ${index + 1}`
+}
 
 function makePlayers(count: number): Player[] {
+  const locale = bootLocale()
+  const names = namesFor(locale)
   return Array.from({ length: count }, (_, i) => ({
     id: createId('p'),
-    name: defaultNames[i] ?? `Player ${i + 1}`,
+    name: names[i] ?? fallbackName(locale, i),
   }))
 }
 
@@ -67,13 +93,15 @@ export const useSession = create<SessionState>((set, get) => ({
 
   addPlayer: (name) => {
     const { players } = get()
+    const locale = usePrefs.getState().locale
+    const names = namesFor(locale)
     const nextIndex = players.length
     set({
       players: [
         ...players,
         {
           id: createId('p'),
-          name: name?.trim() || defaultNames[nextIndex] || `Player ${nextIndex + 1}`,
+          name: name?.trim() || names[nextIndex] || fallbackName(locale, nextIndex),
         },
       ],
     })
@@ -92,6 +120,8 @@ export const useSession = create<SessionState>((set, get) => ({
   },
 
   ensurePlayerCount: (min, max, preferred) => {
+    const locale = usePrefs.getState().locale
+    const names = namesFor(locale)
     let players = [...get().players]
     const target = Math.min(max, Math.max(min, preferred ?? players.length))
 
@@ -99,12 +129,28 @@ export const useSession = create<SessionState>((set, get) => ({
       const i = players.length
       players.push({
         id: createId('p'),
-        name: defaultNames[i] || `Player ${i + 1}`,
+        name: names[i] || fallbackName(locale, i),
       })
     }
     if (players.length > target) {
       players = players.slice(0, target)
     }
     set({ players })
+  },
+
+  remapDefaultNames: (locale) => {
+    const from = locale === 'fa' ? DEFAULT_NAMES.en : DEFAULT_NAMES.fa
+    const to = namesFor(locale)
+    const fromSet = new Set(from)
+
+    set({
+      players: get().players.map((player, index) => {
+        if (!fromSet.has(player.name)) return player
+        return {
+          ...player,
+          name: to[index] ?? fallbackName(locale, index),
+        }
+      }),
+    })
   },
 }))

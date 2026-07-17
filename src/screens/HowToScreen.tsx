@@ -1,37 +1,34 @@
-import { getGame } from '../games/registry'
+import type { GameId } from '../games/types'
+import { useT } from '../i18n/useT'
+import type { MessageKey } from '../i18n/messages'
 import { useSession } from '../store/session'
 import { Screen } from '../components/ui/Screen'
 import { TopBar } from '../components/ui/TopBar'
 import { Button } from '../components/ui/Button'
 
-const HOW_TO: Record<string, { title: string; steps: string[] }> = {
+const HOW_TO_KEYS: Record<string, { title: MessageKey; steps: MessageKey[] }> = {
   pass: {
-    title: 'How Pass works',
-    steps: [
-      'Put one phone or tablet in the middle of the table.',
-      'Pick a game, add everyone sitting around you.',
-      'When it’s someone’s turn, hand them the device — then look away.',
-      'New games plug into the same lobby, so the party can grow.',
-    ],
+    title: 'howto.pass.title',
+    steps: ['howto.pass.1', 'howto.pass.2', 'howto.pass.3', 'howto.pass.4'],
   },
   impostor: {
-    title: 'How Impostor works',
+    title: 'howto.impostor.title',
     steps: [
-      'Pass the phone. Everyone sees a secret word — except the impostors.',
-      'Talk about the word without saying it out loud. Bluff if you’re the impostor.',
-      'When time’s up, vote who you think is faking it.',
-      'If you catch an impostor, the table wins. If not — they do.',
+      'howto.impostor.1',
+      'howto.impostor.2',
+      'howto.impostor.3',
+      'howto.impostor.4',
     ],
   },
   fuse: {
-    title: 'How Fuse works',
-    steps: [
-      'Someone holds a live fuse with a secret timer.',
-      'Answer the prompt out loud, then tap Pass to hand the bomb on.',
-      'When it blows, that person loses a life.',
-      'Last player with lives left wins the round.',
-    ],
+    title: 'howto.fuse.title',
+    steps: ['howto.fuse.1', 'howto.fuse.2', 'howto.fuse.3', 'howto.fuse.4'],
   },
+}
+
+const gameNameKey: Record<GameId, MessageKey> = {
+  impostor: 'games.impostor.name',
+  fuse: 'games.fuse.name',
 }
 
 export function HowToScreen() {
@@ -39,10 +36,11 @@ export function HowToScreen() {
   const selectedGameId = useSession((s) => s.selectedGameId)
   const goHome = useSession((s) => s.goHome)
   const backToLobby = useSession((s) => s.backToLobby)
+  const t = useT()
 
   const key = howToGameId ?? 'pass'
-  const content = HOW_TO[key] ?? HOW_TO.pass!
-  const gameName = howToGameId ? getGame(howToGameId).name : null
+  const content = HOW_TO_KEYS[key] ?? HOW_TO_KEYS.pass!
+  const gameName = howToGameId ? t(gameNameKey[howToGameId]) : null
 
   const onBack = () => {
     if (selectedGameId) backToLobby()
@@ -53,7 +51,7 @@ export function HowToScreen() {
     <Screen>
       <TopBar title={gameName ?? 'Pass'} onBack={onBack} />
       <h2 className="font-display text-3xl font-bold tracking-tight text-fog">
-        {content.title}
+        {t(content.title)}
       </h2>
       <ol className="mt-8 space-y-4">
         {content.steps.map((step, i) => (
@@ -61,13 +59,13 @@ export function HowToScreen() {
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold/20 font-display text-sm font-bold text-gold">
               {i + 1}
             </span>
-            <p className="pt-1.5 text-[17px] leading-relaxed text-fog-dim">{step}</p>
+            <p className="pt-1.5 text-[17px] leading-relaxed text-fog-dim">{t(step)}</p>
           </li>
         ))}
       </ol>
       <div className="mt-auto pt-10">
         <Button className="w-full" size="xl" onClick={onBack}>
-          Got it
+          {t('howto.gotIt')}
         </Button>
       </div>
     </Screen>

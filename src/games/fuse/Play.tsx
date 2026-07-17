@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { useOnExpire } from '../../hooks/useCountdown'
 import { useSession } from '../../store/session'
+import { useT } from '../../i18n/useT'
 import { Button } from '../../components/ui/Button'
 import { FadeSwap } from '../../components/ui/FadeSwap'
 import { Screen } from '../../components/ui/Screen'
@@ -14,6 +15,7 @@ export function FusePlay() {
   const players = useSession((s) => s.players)
   const backToSetup = useSession((s) => s.backToSetup)
   const goHome = useSession((s) => s.goHome)
+  const t = useT()
 
   const phase = useFuse((s) => s.phase)
   const order = useFuse((s) => s.order)
@@ -49,7 +51,7 @@ export function FusePlay() {
   if (phase === 'hold') {
     return (
       <Screen>
-        <TopBar title="Fuse" onBack={leave} />
+        <TopBar title={t('games.fuse.name')} onBack={leave} />
         <FadeSwap id={holderId ?? 'hold'} className="flex flex-1 flex-col">
           <div className="mb-6 flex flex-wrap justify-center gap-2">
             {lifeRow.map((row) => (
@@ -88,19 +90,17 @@ export function FusePlay() {
               <BombMark className="relative size-28" />
             </motion.div>
 
-            <p className="text-sm font-medium tracking-[0.18em] text-spark uppercase">
-              {holder?.name} holds the fuse
+            <p className="label-caps text-sm font-medium text-spark">
+              {t('fuse.play.holds', { name: holder?.name ?? '' })}
             </p>
             <h2 className="mt-4 max-w-sm font-display text-3xl font-extrabold tracking-tight text-fog">
               {prompt}
             </h2>
-            <p className="mt-4 max-w-xs text-fog-dim">
-              Answer out loud, then pass — the timer is secret.
-            </p>
+            <p className="mt-4 max-w-xs text-fog-dim">{t('fuse.play.answerHint')}</p>
           </div>
 
           <Button className="w-full" size="xl" variant="danger" onClick={passBomb}>
-            Pass it on
+            {t('fuse.play.passOn')}
           </Button>
         </FadeSwap>
       </Screen>
@@ -110,7 +110,7 @@ export function FusePlay() {
   if (phase === 'boom') {
     return (
       <Screen>
-        <TopBar title="Boom" onBack={leave} />
+        <TopBar title={t('fuse.play.boom')} onBack={leave} />
         <FadeSwap
           id={`boom-${lastEliminatedId}`}
           className="flex flex-1 flex-col items-center justify-center text-center"
@@ -122,17 +122,19 @@ export function FusePlay() {
             className="w-full rounded-[1.75rem] border border-spark/35 bg-spark/12 px-8 py-10"
           >
             <p className="font-display text-6xl font-extrabold tracking-tight text-spark">
-              BOOM
+              {t('fuse.play.boomTitle')}
             </p>
-            <p className="mt-4 text-xl text-fog">{boomPlayer?.name} loses a life</p>
+            <p className="mt-4 text-xl text-fog">
+              {t('fuse.play.losesLife', { name: boomPlayer?.name ?? '' })}
+            </p>
             <p className="mt-2 inline-flex items-center justify-center gap-1 text-fog-mute">
               <Heart className="size-3.5 fill-gold text-gold" strokeWidth={0} />
-              {lives[lastEliminatedId ?? ''] ?? 0} left
+              {t('fuse.play.left', { count: lives[lastEliminatedId ?? ''] ?? 0 })}
             </p>
           </motion.div>
         </FadeSwap>
         <Button className="w-full" size="xl" onClick={continueAfterBoom}>
-          Keep going
+          {t('fuse.play.keepGoing')}
         </Button>
       </Screen>
     )
@@ -141,22 +143,22 @@ export function FusePlay() {
   if (phase === 'winner') {
     return (
       <Screen>
-        <TopBar title="Winner" onBack={leave} />
+        <TopBar title={t('fuse.play.winner')} onBack={leave} />
         <FadeSwap
           id="winner"
           className="flex flex-1 flex-col items-center justify-center text-center"
         >
-          <p className="text-sm font-medium tracking-[0.18em] text-gold uppercase">
-            Last standing
+          <p className="label-caps text-sm font-medium text-gold">
+            {t('fuse.play.lastStanding')}
           </p>
           <h2 className="mt-3 font-display text-5xl font-extrabold tracking-tight">
-            {winner?.name ?? 'Nobody'}
+            {winner?.name ?? t('fuse.play.nobody')}
           </h2>
-          <p className="mt-4 text-fog-dim">Survived the fuse. Absolute legend.</p>
+          <p className="mt-4 text-fog-dim">{t('fuse.play.legend')}</p>
         </FadeSwap>
         <div className="mt-auto flex flex-col gap-3">
           <Button className="w-full" size="xl" variant="danger" onClick={playAgain}>
-            Rematch
+            {t('fuse.play.rematch')}
           </Button>
           <Button
             className="w-full"
@@ -166,7 +168,7 @@ export function FusePlay() {
               backToSetup()
             }}
           >
-            Change settings
+            {t('common.changeSettings')}
           </Button>
           <Button
             className="w-full"
@@ -177,7 +179,7 @@ export function FusePlay() {
               goHome()
             }}
           >
-            Back to Pass
+            {t('common.backToPass')}
           </Button>
         </div>
       </Screen>
@@ -186,10 +188,10 @@ export function FusePlay() {
 
   return (
     <Screen>
-      <TopBar title="Fuse" onBack={leave} />
+      <TopBar title={t('games.fuse.name')} onBack={leave} />
       <div className="flex flex-1 items-center justify-center">
         <Button variant="danger" onClick={() => useFuse.getState().beginRound()}>
-          Light it
+          {t('fuse.play.lightIt')}
         </Button>
       </div>
     </Screen>

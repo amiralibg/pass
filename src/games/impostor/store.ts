@@ -1,7 +1,9 @@
 import { create } from 'zustand'
-import { pickRandom, shuffle } from '../../lib/shuffle'
+import { pickFresh } from '../../lib/freshPick'
+import { shuffle } from '../../lib/shuffle'
+import { usePrefs } from '../../store/prefs'
 import { useSession } from '../../store/session'
-import { suggestedImpostorCount, WORD_PACKS } from './words'
+import { getPackWords, suggestedImpostorCount, WORD_PACKS } from './words'
 
 export type ImpostorPhase =
   | 'idle'
@@ -64,9 +66,10 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
 
   beginRound: () => {
     const players = useSession.getState().players
+    const locale = usePrefs.getState().locale
     const { packId, impostorCount } = get()
-    const pack = WORD_PACKS.find((p) => p.id === packId) ?? WORD_PACKS[0]!
-    const secretWord = pickRandom(pack.words)
+    const words = getPackWords(packId, locale)
+    const secretWord = pickFresh(words, `impostor:${packId}:${locale}`)
     const impostorIds = shuffle(players.map((p) => p.id)).slice(
       0,
       Math.min(impostorCount, Math.max(1, players.length - 1)),
@@ -131,7 +134,6 @@ export const useImpostor = create<ImpostorState>((set, get) => ({
       }
     })
 
-    // tie → no elimination; still show result framing around impostors
     void impostorIds
     set({ phase: 'result', eliminatedId })
   },

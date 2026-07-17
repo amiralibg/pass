@@ -1,13 +1,21 @@
 import { Plus, Trash2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { getGame } from '../games/registry'
+import type { GameId } from '../games/types'
 import { syncFuseDefaults } from '../games/fuse/store'
 import { syncImpostorDefaults } from '../games/impostor/store'
+import { useT } from '../i18n/useT'
+import type { MessageKey } from '../i18n/messages'
 import { useSession } from '../store/session'
 import { Button } from '../components/ui/Button'
 import { Screen } from '../components/ui/Screen'
 import { TopBar } from '../components/ui/TopBar'
 import { cn } from '../lib/cn'
+
+const gameNameKey: Record<GameId, MessageKey> = {
+  impostor: 'games.impostor.name',
+  fuse: 'games.fuse.name',
+}
 
 export function LobbyScreen() {
   const selectedGameId = useSession((s) => s.selectedGameId)
@@ -19,6 +27,7 @@ export function LobbyScreen() {
   const removePlayer = useSession((s) => s.removePlayer)
   const renamePlayer = useSession((s) => s.renamePlayer)
   const ensurePlayerCount = useSession((s) => s.ensurePlayerCount)
+  const t = useT()
 
   const game = selectedGameId ? getGame(selectedGameId) : null
 
@@ -41,16 +50,18 @@ export function LobbyScreen() {
     openSetup()
   }
 
+  const gameName = t(gameNameKey[selectedGameId])
+
   return (
     <Screen className="gap-2">
-      <TopBar title={game.name} onBack={goHome} />
+      <TopBar title={gameName} onBack={goHome} />
 
       <div className="mb-4">
         <h2 className="font-display text-3xl font-bold tracking-tight text-fog">
-          Who’s at the table?
+          {t('lobby.title')}
         </h2>
         <p className="mt-2 text-fog-dim">
-          {game.minPlayers}–{game.maxPlayers} players. Tap a name to edit.
+          {t('lobby.hint', { min: game.minPlayers, max: game.maxPlayers })}
         </p>
       </div>
 
@@ -58,7 +69,7 @@ export function LobbyScreen() {
         {players.map((player, index) => (
           <div
             key={player.id}
-            className="flex items-center gap-2 rounded-2xl border border-fog/10 bg-ink/25 py-2 pr-2 pl-3"
+            className="flex items-center gap-2 rounded-2xl border border-fog/10 bg-ink/25 py-2 pe-2 ps-3"
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-smoke font-display text-sm font-bold text-gold">
               {index + 1}
@@ -67,13 +78,13 @@ export function LobbyScreen() {
               value={player.name}
               onChange={(e) => renamePlayer(player.id, e.target.value)}
               className="min-w-0 flex-1 bg-transparent py-2 text-[17px] text-fog outline-none placeholder:text-fog-mute"
-              placeholder={`Player ${index + 1}`}
+              placeholder={t('lobby.playerPlaceholder', { n: index + 1 })}
               maxLength={18}
-              aria-label={`Name for player ${index + 1}`}
+              aria-label={t('lobby.nameFor', { n: index + 1 })}
             />
             <button
               type="button"
-              aria-label={`Remove ${player.name}`}
+              aria-label={t('lobby.removePlayer', { name: player.name })}
               disabled={players.length <= game.minPlayers}
               onClick={() => removePlayer(player.id)}
               className={cn(
@@ -95,7 +106,7 @@ export function LobbyScreen() {
           className="w-full"
         >
           <Plus className="size-4" />
-          Add player
+          {t('lobby.addPlayer')}
         </Button>
         <Button
           variant="ghost"
@@ -103,7 +114,7 @@ export function LobbyScreen() {
           onClick={() => openHowTo(selectedGameId)}
           className="w-full"
         >
-          How to play {game.name}
+          {t('lobby.howToPlay', { name: gameName })}
         </Button>
         <Button
           disabled={!canContinue}
@@ -111,7 +122,7 @@ export function LobbyScreen() {
           className="w-full"
           size="xl"
         >
-          Continue
+          {t('lobby.continue')}
         </Button>
       </div>
     </Screen>

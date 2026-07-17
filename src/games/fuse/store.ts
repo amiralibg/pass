@@ -1,7 +1,9 @@
 import { create } from 'zustand'
-import { pickRandom, randomInt, shuffle } from '../../lib/shuffle'
+import { pickFresh } from '../../lib/freshPick'
+import { randomInt, shuffle } from '../../lib/shuffle'
+import { usePrefs } from '../../store/prefs'
 import { useSession } from '../../store/session'
-import { FUSE_PROMPTS, suggestedLives } from './prompts'
+import { getFusePrompts, suggestedLives } from './prompts'
 
 export type FusePhase = 'idle' | 'hold' | 'boom' | 'winner'
 
@@ -33,6 +35,11 @@ function aliveIds(lives: Record<string, number>, order: string[]) {
   return order.filter((id) => (lives[id] ?? 0) > 0)
 }
 
+function nextPrompt() {
+  const locale = usePrefs.getState().locale
+  return pickFresh(getFusePrompts(locale), `fuse:prompt:${locale}`, 32)
+}
+
 export const useFuse = create<FuseState>((set, get) => ({
   phase: 'idle',
   livesEach: 2,
@@ -62,7 +69,7 @@ export const useFuse = create<FuseState>((set, get) => ({
       order,
       holderIndex: 0,
       lives,
-      prompt: pickRandom(FUSE_PROMPTS),
+      prompt: nextPrompt(),
       fuseEndsAt: Date.now() + duration,
       lastEliminatedId: null,
       winnerId: null,
@@ -81,10 +88,9 @@ export const useFuse = create<FuseState>((set, get) => ({
     const nextId = alive[(currentAlivePos + 1) % alive.length]!
     const nextIndex = order.indexOf(nextId)
 
-    // Fuse keeps ticking — only the holder and prompt change.
     set({
       holderIndex: nextIndex,
-      prompt: pickRandom(FUSE_PROMPTS),
+      prompt: nextPrompt(),
     })
   },
 
@@ -139,7 +145,7 @@ export const useFuse = create<FuseState>((set, get) => ({
     set({
       phase: 'hold',
       holderIndex,
-      prompt: pickRandom(FUSE_PROMPTS),
+      prompt: nextPrompt(),
       fuseEndsAt: Date.now() + duration,
       lastEliminatedId: null,
     })
