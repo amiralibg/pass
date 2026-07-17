@@ -1,0 +1,23 @@
+{
+  "name": "Pass",
+  "short_name": "Pass",
+  "description": "Party games for one device around the table. Impostor, Fuse, and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0C0D10",
+  "theme_color": "#0C0D10",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

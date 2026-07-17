@@ -1,0 +1,134 @@
+import type { SVGProps } from 'react'
+import { cn } from '../../lib/cn'
+
+type IconProps = SVGProps<SVGSVGElement> & { className?: string }
+
+/** Pass mark — three seats around a table */
+export function PassMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="64" height="64" rx="16" fill="#0C0D10" />
+      <path
+        d="M14 42c9-14 27-14 36 0"
+        stroke="#E2B03A"
+        strokeWidth="3.75"
+        strokeLinecap="round"
+      />
+      <circle cx="18" cy="30" r="4.75" fill="#E8EEF8" />
+      <circle cx="32" cy="22" r="4.75" fill="#3DDEB0" />
+      <circle cx="46" cy="30" r="4.75" fill="#E8EEF8" />
+    </svg>
+  )
+}
+
+export function PassLogo({ className }: { className?: string }) {
+  return (
+    <div className={cn('inline-flex items-center gap-3', className)}>
+      <PassMark className="size-11" />
+      <span className="font-display text-3xl font-extrabold tracking-tight text-fog">
+        Pass
+      </span>
+    </div>
+  )
+}
+
+export function ImpostorMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#E2B03A" fillOpacity="0.12" />
+      <circle cx="22" cy="24" r="3" fill="#E8EEF8" />
+      <circle cx="34" cy="24" r="3" fill="#E8EEF8" />
+      <path
+        d="M20 34c2.2-4.5 13.8-4.5 16 0"
+        stroke="#E2B03A"
+        strokeWidth="2.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M38 16l5-5M43 16l-5-5"
+        stroke="#FF5A45"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+export function FuseMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#FF5A45" fillOpacity="0.12" />
+      <circle cx="28" cy="32" r="11" fill="#FF5A45" />
+      <circle cx="24" cy="28" r="3.5" fill="#fff" fillOpacity="0.22" />
+      <path
+        d="M28 21V14"
+        stroke="#E2B03A"
+        strokeWidth="2.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M28 14c3.2-.4 4.8-2.8 4-5.2"
+        stroke="#3DDEB0"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+      />
+      <circle cx="33" cy="7.5" r="2.5" fill="#FF5A45" />
+    </svg>
+  )
+}
+
+export function BombMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <defs>
+        <linearGradient id="passBombGrad" x1="36" y1="40" x2="90" y2="100">
+          <stop stopColor="#FF7A68" />
+          <stop offset="1" stopColor="#D63D2C" />
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="68" r="36" fill="url(#passBombGrad)" />
+      <circle cx="48" cy="56" r="8" fill="#fff" fillOpacity="0.18" />
+      <path
+        d="M60 32V22"
+        stroke="#E2B03A"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M60 22c6-1 9-6 7-12"
+        stroke="#3DDEB0"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+      <circle cx="68" cy="8" r="4" fill="#FF5A45" />
+    </svg>
+  )
+}
