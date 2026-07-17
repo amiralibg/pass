@@ -6,6 +6,9 @@ import { syncFuseDefaults } from '../games/fuse/store'
 import { syncImpostorDefaults } from '../games/impostor/store'
 import { syncSpyDefaults } from '../games/spy/store'
 import { syncHotSeatDefaults } from '../games/hotseat/store'
+import { syncStoryDefaults } from '../games/story/store'
+import { syncBondDefaults } from '../games/bond/store'
+import { syncLikelyDefaults } from '../games/likely/store'
 import { useT } from '../i18n/useT'
 import type { MessageKey } from '../i18n/messages'
 import { useSession } from '../store/session'
@@ -19,6 +22,9 @@ const gameNameKey: Record<GameId, MessageKey> = {
   fuse: 'games.fuse.name',
   spy: 'games.spy.name',
   hotseat: 'games.hotseat.name',
+  story: 'games.story.name',
+  bond: 'games.bond.name',
+  likely: 'games.likely.name',
 }
 
 export function LobbyScreen() {
@@ -53,6 +59,9 @@ export function LobbyScreen() {
     if (selectedGameId === 'fuse') syncFuseDefaults()
     if (selectedGameId === 'spy') syncSpyDefaults()
     if (selectedGameId === 'hotseat') syncHotSeatDefaults()
+    if (selectedGameId === 'story') syncStoryDefaults()
+    if (selectedGameId === 'bond') syncBondDefaults()
+    if (selectedGameId === 'likely') syncLikelyDefaults()
     openSetup()
   }
 

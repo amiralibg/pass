@@ -160,6 +160,91 @@ export function SpyMark({ className, ...props }: IconProps) {
   )
 }
 
+export function StoryMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#5AA8D8" fillOpacity="0.12" />
+      <path
+        d="M16 18h18c2.2 0 4 1.8 4 4v16c0 1.1-.9 2-2 2H18c-2.2 0-4-1.8-4-4V20c0-1.1.9-2 2-2z"
+        stroke="#5AA8D8"
+        strokeWidth="2.5"
+        fill="#5AA8D8"
+        fillOpacity="0.15"
+      />
+      <path
+        d="M20 24h12M20 30h10M20 36h7"
+        stroke="#E8EEF8"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+      />
+      <circle cx="42" cy="16" r="4" fill="#E2B03A" />
+    </svg>
+  )
+}
+
+export function BondMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#E87A9A" fillOpacity="0.12" />
+      <circle cx="22" cy="24" r="6" stroke="#E87A9A" strokeWidth="2.5" fill="#E87A9A" fillOpacity="0.2" />
+      <circle cx="34" cy="24" r="6" stroke="#E87A9A" strokeWidth="2.5" fill="#E87A9A" fillOpacity="0.2" />
+      <path
+        d="M16 40c2.5-5 8-7.5 12-7.5S37.5 35 40 40"
+        stroke="#E87A9A"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M28 14l1.2 2.4 2.6.4-1.9 1.8.5 2.6L28 20l-2.4 1.2.5-2.6-1.9-1.8 2.6-.4L28 14z"
+        fill="#E2B03A"
+      />
+    </svg>
+  )
+}
+
+export function LikelyMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#E2B03A" fillOpacity="0.12" />
+      <circle cx="28" cy="28" r="12" stroke="#E2B03A" strokeWidth="2.5" fill="#E2B03A" fillOpacity="0.12" />
+      <path
+        d="M28 18v10l7 4"
+        stroke="#E8EEF8"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M40 14c2.5 1 4 3.2 4 5.8"
+        stroke="#FF5A45"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 export function BombMark({ className, ...props }: IconProps) {
   return (
     <svg

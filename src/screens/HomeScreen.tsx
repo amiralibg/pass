@@ -1,11 +1,14 @@
 import { motion } from 'motion/react'
 import { HelpCircle, Users } from 'lucide-react'
 import {
+  BondMark,
   FuseMark,
   HotSeatMark,
   ImpostorMark,
+  LikelyMark,
   PassMark,
   SpyMark,
+  StoryMark,
 } from '../components/icons/BrandMarks'
 import { HomeControls } from '../components/ui/HomeControls'
 import { GAMES } from '../games/registry'
@@ -22,6 +25,9 @@ const marks = {
   fuse: FuseMark,
   spy: SpyMark,
   hotseat: HotSeatMark,
+  story: StoryMark,
+  bond: BondMark,
+  likely: LikelyMark,
 } as const
 
 const gameNameKey: Record<GameId, MessageKey> = {
@@ -29,6 +35,9 @@ const gameNameKey: Record<GameId, MessageKey> = {
   fuse: 'games.fuse.name',
   spy: 'games.spy.name',
   hotseat: 'games.hotseat.name',
+  story: 'games.story.name',
+  bond: 'games.bond.name',
+  likely: 'games.likely.name',
 }
 
 const gameTaglineKey: Record<GameId, MessageKey> = {
@@ -36,12 +45,17 @@ const gameTaglineKey: Record<GameId, MessageKey> = {
   fuse: 'games.fuse.tagline',
   spy: 'games.spy.tagline',
   hotseat: 'games.hotseat.tagline',
+  story: 'games.story.tagline',
+  bond: 'games.bond.tagline',
+  likely: 'games.likely.tagline',
 }
 
 function accentText(accent: GameDefinition['accent']) {
   if (accent === 'spark') return 'text-spark'
   if (accent === 'mint') return 'text-mint'
   if (accent === 'ember') return 'text-ember'
+  if (accent === 'sky') return 'text-sky'
+  if (accent === 'rose') return 'text-rose'
   return 'text-gold'
 }
 
@@ -49,6 +63,8 @@ function accentPill(accent: GameDefinition['accent']) {
   if (accent === 'spark') return 'bg-spark/20 text-spark'
   if (accent === 'mint') return 'bg-mint/20 text-mint'
   if (accent === 'ember') return 'bg-ember/20 text-ember'
+  if (accent === 'sky') return 'bg-sky/20 text-sky'
+  if (accent === 'rose') return 'bg-rose/20 text-rose'
   return 'bg-gold/20 text-gold'
 }
 

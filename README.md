@@ -15,6 +15,9 @@ No accounts. No extra phones. Hand it over and play.
 | **Fuse** | 2–12 | A live fuse with a secret timer. Answer the prompt, pass before it blows. |
 | **Spy** | 3–12 | Everyone gets a location + role — except the spy. Ask questions, vote them out. |
 | **Hot Seat** | 2–12 | Timed multiple-choice trivia. Take turns, highest score wins. |
+| **Story** | 2–12 | Each player adds a line (only sees the previous one). Read the chaos aloud. |
+| **Know You** | 2–12 | One person answers privately. Friends guess. Who knows them best? |
+| **Likely** | 2–12 | Never Have I Ever, or Most Likely — sip taps or private votes. |
 
 Built so new games plug into the same lobby — drop a folder under `src/games/` and register it.
 
@@ -74,6 +77,27 @@ Pick a game and start the night.
 2. Hand the phone to the player in the seat  
 3. Answer before time runs out — correct = +1  
 4. Highest score after everyone finishes wins
+
+### Story
+
+1. Pick a starter pack and lines each  
+2. Pass the phone — each player continues from the previous line only  
+3. Hide & pass — no peeking at the full story yet  
+4. Read the whole thing out loud at the end
+
+### Know You
+
+1. Pick friends or couple pack + question count  
+2. Choose who’s in the spotlight — they answer privately  
+3. Everyone else guesses their answers  
+4. Highest score knows them best
+
+### Likely
+
+1. Choose Never Have I Ever or Most Likely, then Normal or Spicy  
+2. Never: show a prompt, tap who has done it  
+3. Most Likely: pass the phone for private votes, then reveal  
+4. Final tally after the rounds — large packs avoid recent repeats
 
 ---
 

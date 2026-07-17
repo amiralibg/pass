@@ -37,6 +37,28 @@ const HOW_TO_KEYS: Record<string, { title: MessageKey; steps: MessageKey[] }> = 
       'howto.hotseat.4',
     ],
   },
+  story: {
+    title: 'howto.story.title',
+    steps: [
+      'howto.story.1',
+      'howto.story.2',
+      'howto.story.3',
+      'howto.story.4',
+    ],
+  },
+  bond: {
+    title: 'howto.bond.title',
+    steps: ['howto.bond.1', 'howto.bond.2', 'howto.bond.3', 'howto.bond.4'],
+  },
+  likely: {
+    title: 'howto.likely.title',
+    steps: [
+      'howto.likely.1',
+      'howto.likely.2',
+      'howto.likely.3',
+      'howto.likely.4',
+    ],
+  },
 }
 
 const gameNameKey: Record<GameId, MessageKey> = {
@@ -44,6 +66,9 @@ const gameNameKey: Record<GameId, MessageKey> = {
   fuse: 'games.fuse.name',
   spy: 'games.spy.name',
   hotseat: 'games.hotseat.name',
+  story: 'games.story.name',
+  bond: 'games.bond.name',
+  likely: 'games.likely.name',
 }
 
 export function HowToScreen() {
