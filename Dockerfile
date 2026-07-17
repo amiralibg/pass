@@ -1,13 +1,13 @@
-# Build — only node:20-alpine (already cached on the VPS from other apps)
-FROM node:20-alpine AS builder
+# Use AWS public ECR mirror — Docker Hub TLS often times out on this VPS.
+# Same image as docker.io/library/node:20-alpine.
+FROM public.ecr.aws/docker/library/node:20-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-# Serve static dist with a tiny Node server (no nginx pull)
-FROM node:20-alpine AS production
+FROM public.ecr.aws/docker/library/node:20-alpine AS production
 WORKDIR /app
 
 RUN apk add --no-cache dumb-init \

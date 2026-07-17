@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Don't force a Docker Hub refresh when a base image is already local
+      pull: false
     restart: always
     environment:
       NODE_ENV: production
