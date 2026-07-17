@@ -18,8 +18,15 @@ ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --chown=nodejs:nodejs server.mjs ./
+COPY --chown=nodejs:nodejs server ./server
+COPY --chown=nodejs:nodejs shared ./shared
+
+RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 EXPOSE 3000

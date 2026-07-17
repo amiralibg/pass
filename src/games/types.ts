@@ -34,3 +34,8 @@ export type AppScreen =
   | 'setup'
   | 'play'
   | 'howto'
+  | 'roomJoin'
+  | 'roomLobby'
+  | 'roomPlay'
+
+export type PlayMode = 'table' | 'room'

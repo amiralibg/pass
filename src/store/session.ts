@@ -1,11 +1,12 @@
 import { create } from 'zustand'
 import { createId } from '../lib/id'
-import type { AppScreen, GameId, Player } from '../games/types'
+import type { AppScreen, GameId, PlayMode, Player } from '../games/types'
 import type { Locale } from './prefs'
 import { usePrefs } from './prefs'
 
 interface SessionState {
   screen: AppScreen
+  playMode: PlayMode
   selectedGameId: GameId | null
   players: Player[]
   howToGameId: GameId | null
@@ -17,6 +18,10 @@ interface SessionState {
   startPlay: () => void
   backToLobby: () => void
   backToSetup: () => void
+  openRoomJoin: (code?: string) => void
+  openRoomLobby: () => void
+  openRoomPlay: () => void
+  setPlayMode: (mode: PlayMode) => void
 
   setPlayers: (players: Player[]) => void
   addPlayer: (name?: string) => void
@@ -60,6 +65,7 @@ function makePlayers(count: number): Player[] {
 
 export const useSession = create<SessionState>((set, get) => ({
   screen: 'home',
+  playMode: 'table',
   selectedGameId: null,
   players: makePlayers(4),
   howToGameId: null,
@@ -79,6 +85,7 @@ export const useSession = create<SessionState>((set, get) => ({
 
   selectGame: (gameId) =>
     set({
+      playMode: 'table',
       selectedGameId: gameId,
       screen: 'lobby',
       howToGameId: null,
@@ -88,6 +95,28 @@ export const useSession = create<SessionState>((set, get) => ({
   startPlay: () => set({ screen: 'play' }),
   backToLobby: () => set({ screen: 'lobby' }),
   backToSetup: () => set({ screen: 'setup' }),
+
+  openRoomJoin: () =>
+    set({
+      playMode: 'room',
+      screen: 'roomJoin',
+      selectedGameId: null,
+      howToGameId: null,
+    }),
+
+  openRoomLobby: () =>
+    set({
+      playMode: 'room',
+      screen: 'roomLobby',
+    }),
+
+  openRoomPlay: () =>
+    set({
+      playMode: 'room',
+      screen: 'roomPlay',
+    }),
+
+  setPlayMode: (mode) => set({ playMode: mode }),
 
   setPlayers: (players) => set({ players }),
 
