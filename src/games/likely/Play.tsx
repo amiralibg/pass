@@ -27,6 +27,7 @@ export function LikelyPlay() {
   const lastRoundTop = useLikely((s) => s.lastRoundTop)
   const roundVotes = useLikely((s) => s.roundVotes)
   const toggleSip = useLikely((s) => s.toggleSip)
+  const undoSip = useLikely((s) => s.undoSip)
   const nextNever = useLikely((s) => s.nextNever)
   const showMostVote = useLikely((s) => s.showMostVote)
   const castVote = useLikely((s) => s.castVote)
@@ -64,19 +65,43 @@ export function LikelyPlay() {
           </h2>
           <p className="mt-3 text-sm text-fog-mute">{t('likely.play.sipHint')}</p>
           <div className="mt-6 grid gap-2">
-            {players.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => toggleSip(p.id)}
-                className="flex items-center justify-between rounded-2xl border border-fog/12 bg-ink/30 px-4 py-3 text-start transition-colors hover:border-gold/40 hover:bg-gold/10"
-              >
-                <span className="font-semibold text-fog">{p.name}</span>
-                <span className="tabular-nums text-gold">
-                  {t('likely.play.sips', { count: sips[p.id] ?? 0 })}
-                </span>
-              </button>
-            ))}
+            {players.map((p) => {
+              const count = sips[p.id] ?? 0
+              return (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-2 rounded-2xl border border-fog/12 bg-ink/30 px-3 py-2"
+                >
+                  <button
+                    type="button"
+                    onClick={() => undoSip(p.id)}
+                    disabled={count <= 0}
+                    aria-label={t('likely.play.undoSip', { name: p.name })}
+                    className="flex size-11 shrink-0 items-center justify-center rounded-xl text-xl font-bold text-fog-mute transition-colors hover:bg-smoke hover:text-fog disabled:opacity-25"
+                  >
+                    −
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleSip(p.id)}
+                    className="flex min-w-0 flex-1 items-center justify-between rounded-xl px-2 py-2 text-start transition-colors hover:bg-gold/10"
+                  >
+                    <span className="font-semibold text-fog">{p.name}</span>
+                    <span className="tabular-nums text-gold">
+                      {t('likely.play.sips', { count })}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleSip(p.id)}
+                    aria-label={t('likely.play.addSip', { name: p.name })}
+                    className="flex size-11 shrink-0 items-center justify-center rounded-xl text-xl font-bold text-gold transition-colors hover:bg-gold/15"
+                  >
+                    +
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </FadeSwap>
         <Button className="mt-6 w-full" size="xl" onClick={nextNever}>

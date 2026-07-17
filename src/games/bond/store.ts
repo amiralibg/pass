@@ -129,10 +129,11 @@ export const useBond = create<BondState>((set, get) => ({
       })
       return
     }
+    // Keep answering in one private session — no re-pass between the star’s own questions.
     set({
       subjectAnswers: next,
       answerIndex: answerIndex + 1,
-      phase: 'answerPass',
+      phase: 'answer',
     })
   },
 
@@ -167,7 +168,13 @@ export const useBond = create<BondState>((set, get) => ({
     } = get()
     const nextQ = guessQuestionIndex + 1
     if (nextQ < queue.length) {
-      set({ guessQuestionIndex: nextQ, phase: 'guessPass', lastCorrect: null, lastGuess: null })
+      // Same guesser keeps the phone — pass only when the next person starts.
+      set({
+        guessQuestionIndex: nextQ,
+        phase: 'guess',
+        lastCorrect: null,
+        lastGuess: null,
+      })
       return
     }
     const nextGuesser = guesserIndex + 1

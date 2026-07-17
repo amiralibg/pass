@@ -9,8 +9,8 @@ interface ScreenProps {
 
 export function Screen({ children, className, wide }: ScreenProps) {
   return (
-    <div className="relative min-h-dvh night-surface overflow-hidden">
-      <div className="night-noise absolute inset-0" aria-hidden />
+    <div className="relative min-h-dvh night-surface overflow-x-hidden overflow-y-auto">
+      <div className="night-noise pointer-events-none absolute inset-0" aria-hidden />
       <div
         className={cn(
           'relative z-10 mx-auto flex min-h-dvh w-full flex-col safe-pad',

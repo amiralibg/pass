@@ -38,6 +38,7 @@ interface LikelyState {
   setRounds: (n: number) => void
   beginRound: () => void
   toggleSip: (playerId: string) => void
+  undoSip: (playerId: string) => void
   nextNever: () => void
   showMostVote: () => void
   castVote: (targetId: string) => void
@@ -131,6 +132,14 @@ export const useLikely = create<LikelyState>((set, get) => ({
     const { phase, sips } = get()
     if (phase !== 'never') return
     set({ sips: { ...sips, [playerId]: (sips[playerId] ?? 0) + 1 } })
+  },
+
+  undoSip: (playerId) => {
+    const { phase, sips } = get()
+    if (phase !== 'never') return
+    const current = sips[playerId] ?? 0
+    if (current <= 0) return
+    set({ sips: { ...sips, [playerId]: current - 1 } })
   },
 
   nextNever: () => {

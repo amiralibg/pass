@@ -77,14 +77,20 @@ export function StoryPlay() {
             {lines.length === 0 ? starter : previous}
           </p>
           <label className="mt-6 block">
-            <span className="label-caps text-sm font-medium text-fog-mute">
-              {t('story.play.yourLine')}
+            <span className="flex items-center justify-between gap-3">
+              <span className="label-caps text-sm font-medium text-fog-mute">
+                {t('story.play.yourLine')}
+              </span>
+              <span className="text-xs tabular-nums text-fog-mute">
+                {draft.length}/220
+              </span>
             </span>
             <textarea
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               rows={4}
               maxLength={220}
+              autoFocus
               placeholder={t('story.play.placeholder')}
               className="mt-2 w-full resize-none rounded-2xl border border-fog/12 bg-ink/30 px-4 py-3 text-[17px] text-fog outline-none placeholder:text-fog-mute focus:border-sky/45"
             />

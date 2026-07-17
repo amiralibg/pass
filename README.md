@@ -80,12 +80,32 @@ Pick a game and start the night.
 
 ### Story
 
+<p align="center">
+  <img src="docs/screenshots/09-story-setup.png" alt="Story setup" width="220" />
+  &nbsp;
+  <img src="docs/screenshots/10-story-pass.png" alt="Story pass the phone" width="220" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/11-story-write.png" alt="Story write a line" width="220" />
+</p>
+
 1. Pick a starter pack and lines each  
 2. Pass the phone — each player continues from the previous line only  
 3. Hide & pass — no peeking at the full story yet  
 4. Read the whole thing out loud at the end
 
 ### Know You
+
+<p align="center">
+  <img src="docs/screenshots/12-bond-setup.png" alt="Know You setup" width="220" />
+  &nbsp;
+  <img src="docs/screenshots/13-bond-pick.png" alt="Know You pick the star" width="220" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/14-bond-pass.png" alt="Know You pass the phone" width="220" />
+</p>
 
 1. Pick friends or couple pack + question count  
 2. Choose who’s in the spotlight — they answer privately  
@@ -94,8 +114,14 @@ Pick a game and start the night.
 
 ### Likely
 
+<p align="center">
+  <img src="docs/screenshots/15-likely-setup.png" alt="Likely setup with Normal and Spicy" width="220" />
+  &nbsp;
+  <img src="docs/screenshots/16-likely-never.png" alt="Never Have I Ever sip screen" width="220" />
+</p>
+
 1. Choose Never Have I Ever or Most Likely, then Normal or Spicy  
-2. Never: show a prompt, tap who has done it  
+2. Never: tap + when someone has done it (use − to undo)  
 3. Most Likely: pass the phone for private votes, then reveal  
 4. Final tally after the rounds — large packs avoid recent repeats
 

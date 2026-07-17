@@ -110,9 +110,17 @@ export function BondPlay() {
     return (
       <Screen>
         <TopBar title={subject?.name ?? t('games.bond.name')} onBack={leave} />
-        <p className="label-caps text-sm font-medium text-rose">
-          {t('bond.play.aboutYou')}
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="label-caps text-sm font-medium text-rose">
+            {t('bond.play.aboutYou')}
+          </p>
+          <p className="text-sm text-fog-mute">
+            {t('bond.play.progress', {
+              current: answerIndex + 1,
+              total: queue.length,
+            })}
+          </p>
+        </div>
         <h2 className="mt-4 font-display text-2xl font-bold leading-snug tracking-tight">
           {prompt}
         </h2>
@@ -171,9 +179,17 @@ export function BondPlay() {
     return (
       <Screen>
         <TopBar title={guesser?.name ?? t('games.bond.name')} onBack={leave} />
-        <p className="label-caps text-sm font-medium text-rose">
-          {t('bond.play.aboutStar', { name: subject?.name ?? '' })}
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="label-caps text-sm font-medium text-rose">
+            {t('bond.play.aboutStar', { name: subject?.name ?? '' })}
+          </p>
+          <p className="text-sm text-fog-mute">
+            {t('bond.play.progress', {
+              current: guessQuestionIndex + 1,
+              total: queue.length,
+            })}
+          </p>
+        </div>
         <h2 className="mt-4 font-display text-2xl font-bold leading-snug tracking-tight">
           {prompt}
         </h2>

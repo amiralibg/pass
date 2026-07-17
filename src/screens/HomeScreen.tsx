@@ -106,7 +106,7 @@ export function HomeScreen() {
         </motion.div>
 
         <motion.div
-          className="mt-10 space-y-3"
+          className="mt-8 space-y-2.5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
@@ -119,25 +119,25 @@ export function HomeScreen() {
                 type="button"
                 onClick={() => selectGame(game.id)}
                 className={cn(
-                  'group relative w-full overflow-hidden rounded-[1.4rem] border border-fog/10 px-4 py-4 text-start transition-[transform,background-color,border-color] duration-200',
+                  'group relative w-full overflow-hidden rounded-[1.25rem] border border-fog/10 px-3.5 py-3 text-start transition-[transform,background-color,border-color] duration-200',
                   'bg-ink/40 hover:-translate-y-0.5 hover:border-fog/22 hover:bg-ink/55',
                 )}
               >
-                <div className="flex items-center gap-4">
-                  <Mark className="size-14" />
+                <div className="flex items-center gap-3">
+                  <Mark className="size-12" />
                   <div className="min-w-0 flex-1">
                     <p
                       className={cn(
-                        'font-display text-2xl font-bold tracking-tight',
+                        'font-display text-xl font-bold tracking-tight',
                         accentText(game.accent),
                       )}
                     >
                       {t(gameNameKey[game.id])}
                     </p>
-                    <p className="mt-0.5 text-[15px] leading-snug text-fog-dim">
+                    <p className="mt-0.5 line-clamp-2 text-[14px] leading-snug text-fog-dim">
                       {t(gameTaglineKey[game.id])}
                     </p>
-                    <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-fog-mute">
+                    <p className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-fog-mute">
                       <Users className="size-3.5" strokeWidth={2.25} />
                       {t('home.playersRange', {
                         min: game.minPlayers,
@@ -147,7 +147,7 @@ export function HomeScreen() {
                   </div>
                   <span
                     className={cn(
-                      'label-caps shrink-0 rounded-full px-3 py-1 text-xs font-semibold',
+                      'label-caps shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold',
                       accentPill(game.accent),
                     )}
                   >

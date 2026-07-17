@@ -55,7 +55,7 @@ export function StorySetup() {
         <p className="label-caps text-sm font-medium text-fog-mute">
           {t('story.setup.starterPack')}
         </p>
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {STARTER_PACKS.map((pack) => {
             const count = getPackStarters(pack.id).length
             return (
