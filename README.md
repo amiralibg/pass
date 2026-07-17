@@ -1,7 +1,8 @@
 # Pass
 
-Party games for **one shared device** around the table.  
-No accounts. No extra phones. Hand it over and play.
+Party games for **one shared device** around the table — plus **online rooms** so everyone can play on their own phone.
+
+No accounts. Hand it over at the table, or share a room link.
 
 <p align="center">
   <img src="docs/screenshots/01-home.png" alt="Pass home screen" width="280" />
@@ -134,12 +135,28 @@ npm install
 npm run dev
 ```
 
-Open the local URL on a phone or tablet and put it in the middle of the table.
+That starts Vite (client) and the Express + WebSocket API together. Open the local URL (usually `http://localhost:5173`).
+
+- **Table:** pick a game on home and play on one device.  
+- **Online:** tap **Play online**, create a room, share `/r/CODE`.
 
 ```bash
 npm run build
-npm run preview
+npm start          # serves dist + rooms API on PORT (default 3000)
 ```
+
+Dev pieces separately: `npm run dev:web` / `npm run dev:server`.
+
+---
+
+## Online rooms (v1)
+
+- Express serves the SPA, `GET /health`, `POST/GET /api/rooms`, and WebSocket `/ws`
+- In-memory rooms with TTL cleanup; secrets stay on the server
+- **Impostor** online first (private cards, parallel vote)
+- Reconnect via `sessionStorage` (room code + player id)
+
+Table mode is unchanged (local Zustand, no server).
 
 ---
 
@@ -147,7 +164,8 @@ npm run preview
 
 - Vite + React + TypeScript  
 - Tailwind CSS v4  
-- Zustand (session + per-game state)  
+- Zustand (session + per-game / room client state)  
+- Express + `ws` (rooms + static SPA in production)  
 - Motion (screen transitions)
 
 ### Expand with a new game
@@ -184,8 +202,8 @@ docker compose up -d --build
 
 Files:
 
-- `Dockerfile` — multi-stage Vite build → Node static server (`node:20-alpine` only)
-- `server.mjs` — SPA routing, `/health`, asset caching
+- `Dockerfile` — multi-stage Vite build → Express (`server.mjs` + `server/` + `shared/`)
+- `server.mjs` — Express SPA + `/health` + WebSocket rooms
 - `docker-compose.yml` — port 3000, healthcheck, log rotation
 
 ---

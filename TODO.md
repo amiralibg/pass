@@ -14,30 +14,31 @@ Keep **Table** as the core (one shared device). Add **Room** as a second path: c
 
 ### Product
 
-- [ ] Home entry: **Play at the table** vs **Play online (room)**
-- [ ] Create room → short code + shareable link (`/r/AB12`)
-- [ ] Join by code or link with display name (no accounts v1)
-- [ ] Host picks game + settings; host starts / advances rounds
-- [ ] Same games, different transport + UI (no “pass the phone”; private cards stay private)
+- [x] Home entry: **Play at the table** vs **Play online (room)**
+- [x] Create room → short code + shareable link (`/r/AB12`)
+- [x] Join by code or link with display name (no accounts v1)
+- [x] Host picks game + settings; host starts / advances rounds
+- [x] Same games, different transport + UI (no “pass the phone”; private cards stay private) — Impostor online
 
 ### Backend
 
-- [ ] Small realtime server (Node + WebSockets / Socket.IO)
-- [ ] Authoritative room state on the server (secrets must not live only on clients)
-- [ ] Room TTL / cleanup for abandoned rooms
-- [ ] Reconnect: room code + player id in `sessionStorage`
-- [ ] Deploy API beside the Vite app (Dokploy)
+- [x] Small realtime server (Express + WebSockets / `ws`)
+- [x] Authoritative room state on the server (secrets must not live only on clients)
+- [x] Room TTL / cleanup for abandoned rooms
+- [x] Reconnect: room code + player id in `sessionStorage`
+- [x] Deploy API beside the Vite app (Dokploy)
 
 ### Client architecture
 
-- [ ] Split game **rules** from **where state lives**
-- [ ] Table mode: keep local Zustand (offline, no server)
-- [ ] Room mode: sync patches over WebSocket
-- [ ] Host-only actions vs private actions (see my role / my answer)
+- [x] Split game **rules** from **where state lives**
+- [x] Table mode: keep local Zustand (offline, no server)
+- [x] Room mode: sync patches over WebSocket
+- [x] Host-only actions vs private actions (see my role / my answer)
 
 ### Port games online (order)
 
-- [ ] Impostor or Spy first (private reveal + shared vote)
+- [x] Impostor first (private reveal + shared vote)
+- [ ] Spy
 - [ ] Hot Seat, Know You, Likely
 - [ ] Story, Fuse (shared timer / turn assignment)
 
