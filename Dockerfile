@@ -1,4 +1,4 @@
-# Build
+# Build — only node:20-alpine (already cached on the VPS from other apps)
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -6,12 +6,26 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Serve
-FROM nginx:1.27-alpine AS production
-RUN apk add --no-cache curl
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
+# Serve static dist with a tiny Node server (no nginx pull)
+FROM node:20-alpine AS production
+WORKDIR /app
+
+RUN apk add --no-cache dumb-init \
+  && addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 --ingroup nodejs nodejs
+
+ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --chown=nodejs:nodejs server.mjs ./
+
+USER nodejs
+EXPOSE 3000
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -fsS http://127.0.0.1/health || exit 1
-CMD ["nginx", "-g", "daemon off;"]
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/health || exit 1
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server.mjs"]

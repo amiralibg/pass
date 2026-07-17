@@ -107,9 +107,9 @@ npm run preview
 
 Repo: `https://github.com/amiralibg/pass.git`
 
-1. Create a Dokploy application from that repo  
-2. Build path: repo root · Dockerfile: `Dockerfile` (or Compose: `docker-compose.yml`)  
-3. Set the domain port to **80** — Traefik handles TLS  
+1. Create a Dokploy Compose application from that repo  
+2. Compose file: `docker-compose.yml`  
+3. Domain → Service Name `pass` · Container Port **3000** · Path `/`  
 4. Health check path: `/health`
 
 ```bash
@@ -118,9 +118,9 @@ docker compose up -d --build
 
 Files:
 
-- `Dockerfile` — multi-stage Vite build → nginx  
-- `nginx.conf` — SPA routing, `/health`, asset caching  
-- `docker-compose.yml` — port 80, healthcheck, log rotation
+- `Dockerfile` — multi-stage Vite build → Node static server (`node:20-alpine` only)
+- `server.mjs` — SPA routing, `/health`, asset caching
+- `docker-compose.yml` — port 3000, healthcheck, log rotation
 
 ---
 
