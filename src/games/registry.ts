@@ -1,4 +1,4 @@
-import type { GameDefinition, GameId } from './types'
+import type { GameCategory, GameDefinition, GameId } from './types'
 import { ImpostorSetup } from './impostor/Setup'
 import { ImpostorPlay } from './impostor/Play'
 import { FuseSetup } from './fuse/Setup'
@@ -13,6 +13,10 @@ import { BondSetup } from './bond/Setup'
 import { BondPlay } from './bond/Play'
 import { LikelySetup } from './likely/Setup'
 import { LikelyPlay } from './likely/Play'
+import { ActSetup } from './act/Setup'
+import { ActPlay } from './act/Play'
+import { TruthDareSetup } from './truthdare/Setup'
+import { TruthDarePlay } from './truthdare/Play'
 
 /**
  * Game registry — add a new party game by appending here.
@@ -29,6 +33,7 @@ export const GAMES: GameDefinition[] = [
     maxPlayers: 12,
     defaultPlayers: 5,
     accent: 'gold',
+    category: 'deduce',
     Setup: ImpostorSetup,
     Play: ImpostorPlay,
   },
@@ -42,6 +47,7 @@ export const GAMES: GameDefinition[] = [
     maxPlayers: 12,
     defaultPlayers: 4,
     accent: 'spark',
+    category: 'active',
     Setup: FuseSetup,
     Play: FusePlay,
   },
@@ -55,6 +61,7 @@ export const GAMES: GameDefinition[] = [
     maxPlayers: 12,
     defaultPlayers: 6,
     accent: 'mint',
+    category: 'deduce',
     Setup: SpySetup,
     Play: SpyPlay,
   },
@@ -68,6 +75,7 @@ export const GAMES: GameDefinition[] = [
     maxPlayers: 12,
     defaultPlayers: 4,
     accent: 'ember',
+    category: 'words',
     Setup: HotSeatSetup,
     Play: HotSeatPlay,
   },
@@ -81,6 +89,7 @@ export const GAMES: GameDefinition[] = [
     maxPlayers: 12,
     defaultPlayers: 4,
     accent: 'sky',
+    category: 'words',
     Setup: StorySetup,
     Play: StoryPlay,
   },
@@ -94,6 +103,7 @@ export const GAMES: GameDefinition[] = [
     maxPlayers: 12,
     defaultPlayers: 4,
     accent: 'rose',
+    category: 'personal',
     Setup: BondSetup,
     Play: BondPlay,
   },
@@ -107,13 +117,50 @@ export const GAMES: GameDefinition[] = [
     maxPlayers: 12,
     defaultPlayers: 5,
     accent: 'gold',
+    category: 'personal',
     Setup: LikelySetup,
     Play: LikelyPlay,
+  },
+  {
+    id: 'act',
+    name: 'Act',
+    tagline: 'Act it out. No words. Beat the clock.',
+    description:
+      'One player acts the secret word while the table shouts guesses before time runs out.',
+    minPlayers: 3,
+    maxPlayers: 12,
+    defaultPlayers: 4,
+    accent: 'mint',
+    category: 'active',
+    Setup: ActSetup,
+    Play: ActPlay,
+  },
+  {
+    id: 'truthdare',
+    name: 'Truth or Dare',
+    tagline: 'Spill it or do it. Chicken out and it counts.',
+    description:
+      'Pass the phone. Pick Truth, Dare, or Random — do the prompt or take the chicken.',
+    minPlayers: 2,
+    maxPlayers: 12,
+    defaultPlayers: 4,
+    accent: 'rose',
+    category: 'personal',
+    Setup: TruthDareSetup,
+    Play: TruthDarePlay,
   },
 ]
 
 /** Games with a working room / online path (everyone on their own phone). */
 export const ONLINE_GAME_IDS: GameId[] = ['impostor', 'spy', 'likely']
+
+/** Display order of home-screen groups. */
+export const GAME_CATEGORIES: GameCategory[] = [
+  'deduce',
+  'active',
+  'personal',
+  'words',
+]
 
 export function getGame(id: GameId): GameDefinition {
   const game = GAMES.find((g) => g.id === id)

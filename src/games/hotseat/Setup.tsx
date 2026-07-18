@@ -4,10 +4,10 @@ import { useSession } from '../../store/session'
 import { useT } from '../../i18n/useT'
 import type { MessageKey } from '../../i18n/messages'
 import { Button } from '../../components/ui/Button'
+import { OptionCard } from '../../components/ui/OptionCard'
 import { Screen } from '../../components/ui/Screen'
 import { Stepper } from '../../components/ui/Stepper'
 import { TopBar } from '../../components/ui/TopBar'
-import { cn } from '../../lib/cn'
 
 const packNameKey: Record<string, MessageKey> = {
   general: 'packs.general',
@@ -61,24 +61,14 @@ export function HotSeatSetup() {
           {QUESTION_PACKS.map((pack) => {
             const count = getPackQuestions(pack.id).length
             return (
-              <button
+              <OptionCard
                 key={pack.id}
-                type="button"
-                onClick={() => setPackId(pack.id)}
-                className={cn(
-                  'rounded-2xl border px-4 py-3 text-start transition-colors',
-                  packId === pack.id
-                    ? 'border-ember/50 bg-ember/15 text-fog'
-                    : 'border-fog/10 bg-ink/25 text-fog-dim hover:border-fog/20',
-                )}
-              >
-                <span className="block font-semibold text-fog">
-                  {t(packNameKey[pack.id] ?? 'packs.general')}
-                </span>
-                <span className="mt-0.5 block text-xs text-fog-mute">
-                  {t('hotseat.setup.questionsCount', { count })}
-                </span>
-              </button>
+                selected={packId === pack.id}
+                onSelect={() => setPackId(pack.id)}
+                accent="ember"
+                title={t(packNameKey[pack.id] ?? 'packs.general')}
+                hint={t('hotseat.setup.questionsCount', { count })}
+              />
             )
           })}
         </div>

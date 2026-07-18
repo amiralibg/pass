@@ -245,6 +245,64 @@ export function LikelyMark({ className, ...props }: IconProps) {
   )
 }
 
+export function ActMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#3DDEB0" fillOpacity="0.12" />
+      <circle cx="28" cy="18" r="6" stroke="#3DDEB0" strokeWidth="2.5" fill="#3DDEB0" fillOpacity="0.2" />
+      <path
+        d="M14 42c1.5-7 7-11 14-11s12.5 4 14 11"
+        stroke="#3DDEB0"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M40 20l4-2M40 26l4 1M14 20l-4-2M14 26l-4 1"
+        stroke="#E2B03A"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+export function TruthDareMark({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('shrink-0', className)}
+      aria-hidden
+      {...props}
+    >
+      <rect width="56" height="56" rx="16" fill="#E87A9A" fillOpacity="0.12" />
+      <path
+        d="M28 40s-11-6.5-11-14a6.5 6.5 0 0 1 11-4.7A6.5 6.5 0 0 1 39 26c0 7.5-11 14-11 14z"
+        stroke="#E87A9A"
+        strokeWidth="2.5"
+        fill="#E87A9A"
+        fillOpacity="0.2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M25 25c0-1.6 1.3-3 3-3s3 1.1 3 2.6c0 2-3 2.4-3 4M28 33.5h.02"
+        stroke="#E8EEF8"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function BombMark({ className, ...props }: IconProps) {
   return (
     <svg

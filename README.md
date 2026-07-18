@@ -19,6 +19,10 @@ No accounts. Hand it over at the table, or share a room link.
 | **Story** | 2–12 | Each player adds a line (only sees the previous one). Read the chaos aloud. |
 | **Know You** | 2–12 | One person answers privately. Friends guess. Who knows them best? |
 | **Likely** | 2–12 | Never Have I Ever, or Most Likely — sip taps or private votes. |
+| **Act** | 3–12 | Charades. One player acts the secret word; the table races the clock to guess. |
+| **Truth or Dare** | 2–12 | Pass the phone. Truth, Dare, or Random — do it or take the chicken. |
+
+Several games have an opt-in **Spicy / After Dark** tier (18+) alongside their normal packs — the table chooses it on setup.
 
 Built so new games plug into the same lobby — drop a folder under `src/games/` and register it.
 

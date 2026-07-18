@@ -1,6 +1,20 @@
 # Pass — roadmap
 
-## Now — new table games
+## Done — richer nights
+
+- [x] **Act** — charades: actor sees the word, acts it, table guesses; timer + Got it / Skip; 6 word packs incl. After Dark
+- [x] **Truth or Dare** — rotate the spotlight, Truth / Dare / Random, Done vs Chicken, finale (most daring · chicken of the night); Normal + truly spicy 18+ decks
+- [x] Standardize setup UI — shared `OptionCard` for pack / mode / heat pickers, shared `Heat` type, spicy always `spark`-accented
+- [x] Way richer content packs (bilingual en/fa):
+  - [x] Likely — grew all 4 packs; Spicy is now genuinely adult (never-spicy 120, most-spicy 119)
+  - [x] Know You — new Spicy pack (20 questions)
+  - [x] Impostor — After Dark pack (48 words)
+  - [x] Fuse — bigger prompt pools (+35 each locale)
+  - [x] Spy — more locations (nightlife 16→22, trip 28→29)
+  - [x] Story — After Dark pack (30 starters)
+  - [ ] Hot Seat — already rich (50/50/40/40); revisit if needed
+
+## Done — new table games
 
 - [x] **Story** — each player adds a line (sees only the previous one); reveal the full story at the end
 - [x] **Know You** — couple / friend quiz: one person answers privately, others guess

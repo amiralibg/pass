@@ -2,6 +2,7 @@ import { useMemo, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { HelpCircle, Smartphone, Users, Wifi } from 'lucide-react'
 import {
+  ActMark,
   BondMark,
   FuseMark,
   HotSeatMark,
@@ -10,10 +11,16 @@ import {
   PassMark,
   SpyMark,
   StoryMark,
+  TruthDareMark,
 } from '../components/icons/BrandMarks'
 import { HomeControls } from '../components/ui/HomeControls'
-import { GAMES, ONLINE_GAME_IDS } from '../games/registry'
-import type { GameDefinition, GameId, PlayMode } from '../games/types'
+import { GAME_CATEGORIES, GAMES, ONLINE_GAME_IDS } from '../games/registry'
+import type {
+  GameCategory,
+  GameDefinition,
+  GameId,
+  PlayMode,
+} from '../games/types'
 import { useT } from '../i18n/useT'
 import type { MessageKey } from '../i18n/messages'
 import { useSession } from '../store/session'
@@ -29,6 +36,8 @@ const marks = {
   story: StoryMark,
   bond: BondMark,
   likely: LikelyMark,
+  act: ActMark,
+  truthdare: TruthDareMark,
 } as const
 
 const gameNameKey: Record<GameId, MessageKey> = {
@@ -39,6 +48,8 @@ const gameNameKey: Record<GameId, MessageKey> = {
   story: 'games.story.name',
   bond: 'games.bond.name',
   likely: 'games.likely.name',
+  act: 'games.act.name',
+  truthdare: 'games.truthdare.name',
 }
 
 const gameTaglineKey: Record<GameId, MessageKey> = {
@@ -49,6 +60,15 @@ const gameTaglineKey: Record<GameId, MessageKey> = {
   story: 'games.story.tagline',
   bond: 'games.bond.tagline',
   likely: 'games.likely.tagline',
+  act: 'games.act.tagline',
+  truthdare: 'games.truthdare.tagline',
+}
+
+const categoryNameKey: Record<GameCategory, MessageKey> = {
+  deduce: 'home.cat.deduce',
+  active: 'home.cat.active',
+  personal: 'home.cat.personal',
+  words: 'home.cat.words',
 }
 
 function accentText(accent: GameDefinition['accent']) {
@@ -79,14 +99,19 @@ export function HomeScreen() {
 
   const tab: PlayMode = playMode === 'room' ? 'room' : 'table'
 
-  const listed = useMemo(() => {
-    if (tab === 'table') return GAMES
-    return GAMES.filter((g) => ONLINE_GAME_IDS.includes(g.id))
-  }, [tab])
-
-  const soonGames = useMemo(() => {
-    if (tab !== 'room') return []
-    return GAMES.filter((g) => !ONLINE_GAME_IDS.includes(g.id))
+  const groups = useMemo(() => {
+    return GAME_CATEGORIES.map((category) => {
+      const inCategory = GAMES.filter((g) => g.category === category)
+      const playable =
+        tab === 'room'
+          ? inCategory.filter((g) => ONLINE_GAME_IDS.includes(g.id))
+          : inCategory
+      const soon =
+        tab === 'room'
+          ? inCategory.filter((g) => !ONLINE_GAME_IDS.includes(g.id))
+          : []
+      return { category, playable, soon }
+    }).filter((group) => group.playable.length > 0 || group.soon.length > 0)
   }, [tab])
 
   return (
@@ -149,90 +174,48 @@ export function HomeScreen() {
 
         <motion.div
           key={tab}
-          className="mt-6 space-y-2.5"
+          className="mt-6 space-y-5"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <p className="label-caps text-xs font-semibold text-fog-mute">
-            {tab === 'table' ? t('home.tableSection') : t('home.onlineSection')}
-          </p>
-
-          {listed.map((game) => {
-            const Mark = marks[game.id]
-            return (
-              <button
-                key={game.id}
-                type="button"
-                onClick={() => {
-                  if (tab === 'room') {
-                    openRoomJoin(game.id)
-                    return
-                  }
-                  selectGame(game.id)
-                }}
-                className={cn(
-                  'group relative w-full overflow-hidden rounded-[1.25rem] border border-fog/10 px-3.5 py-3 text-start transition-[transform,background-color,border-color] duration-200',
-                  'bg-ink/40 hover:-translate-y-0.5 hover:border-fog/22 hover:bg-ink/55',
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <Mark className="size-12" />
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className={cn(
-                        'font-display text-xl font-bold tracking-tight',
-                        accentText(game.accent),
-                      )}
-                    >
-                      {t(gameNameKey[game.id])}
-                    </p>
-                    <p className="mt-0.5 line-clamp-2 text-[14px] leading-snug text-fog-dim">
-                      {t(gameTaglineKey[game.id])}
-                    </p>
-                    <p className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-fog-mute">
-                      <Users className="size-3.5" strokeWidth={2.25} />
-                      {t('home.playersRange', {
-                        min: game.minPlayers,
-                        max: game.maxPlayers,
-                      })}
-                    </p>
-                  </div>
-                  <span
-                    className={cn(
-                      'label-caps shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold',
-                      tab === 'room' ? 'bg-mint/20 text-mint' : accentPill(game.accent),
-                    )}
-                  >
-                    {tab === 'room' ? t('home.onlineBadge') : t('home.play')}
-                  </span>
-                </div>
-              </button>
-            )
-          })}
-
-          {soonGames.length > 0 && (
-            <div className="pt-3">
+          {groups.map(({ category, playable, soon }) => (
+            <div key={category} className="space-y-2.5">
               <p className="label-caps text-xs font-semibold text-fog-mute">
-                {t('home.comingSoon')}
+                {t(categoryNameKey[category])}
               </p>
-              <ul className="mt-2 space-y-1.5">
-                {soonGames.map((game) => (
-                  <li
-                    key={game.id}
-                    className="flex items-center justify-between rounded-xl border border-fog/8 bg-ink/25 px-3.5 py-2.5 opacity-55"
-                  >
-                    <span className="text-sm font-medium text-fog-dim">
-                      {t(gameNameKey[game.id])}
-                    </span>
-                    <span className="label-caps text-[10px] font-semibold text-fog-mute">
-                      {t('home.soon')}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+
+              {playable.map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  tab={tab}
+                  t={t}
+                  onSelect={() =>
+                    tab === 'room' ? openRoomJoin(game.id) : selectGame(game.id)
+                  }
+                />
+              ))}
+
+              {soon.length > 0 && (
+                <ul className="space-y-1.5">
+                  {soon.map((game) => (
+                    <li
+                      key={game.id}
+                      className="flex items-center justify-between rounded-xl border border-fog/8 bg-ink/25 px-3.5 py-2.5 opacity-55"
+                    >
+                      <span className="text-sm font-medium text-fog-dim">
+                        {t(gameNameKey[game.id])}
+                      </span>
+                      <span className="label-caps text-[10px] font-semibold text-fog-mute">
+                        {t('home.soon')}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          )}
+          ))}
         </motion.div>
       </div>
 
@@ -249,6 +232,62 @@ export function HomeScreen() {
         <p className="text-center text-sm text-fog-mute">{t('home.footer')}</p>
       </motion.div>
     </Screen>
+  )
+}
+
+function GameCard({
+  game,
+  tab,
+  onSelect,
+  t,
+}: {
+  game: GameDefinition
+  tab: PlayMode
+  onSelect: () => void
+  t: ReturnType<typeof useT>
+}) {
+  const Mark = marks[game.id]
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={cn(
+        'group relative w-full overflow-hidden rounded-[1.25rem] border border-fog/10 px-3.5 py-3 text-start transition-[transform,background-color,border-color] duration-200',
+        'bg-ink/40 hover:-translate-y-0.5 hover:border-fog/22 hover:bg-ink/55',
+      )}
+    >
+      <div className="flex items-center gap-3">
+        <Mark className="size-12" />
+        <div className="min-w-0 flex-1">
+          <p
+            className={cn(
+              'font-display text-xl font-bold tracking-tight',
+              accentText(game.accent),
+            )}
+          >
+            {t(gameNameKey[game.id])}
+          </p>
+          <p className="mt-0.5 line-clamp-2 text-[14px] leading-snug text-fog-dim">
+            {t(gameTaglineKey[game.id])}
+          </p>
+          <p className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-fog-mute">
+            <Users className="size-3.5" strokeWidth={2.25} />
+            {t('home.playersRange', {
+              min: game.minPlayers,
+              max: game.maxPlayers,
+            })}
+          </p>
+        </div>
+        <span
+          className={cn(
+            'label-caps shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold',
+            tab === 'room' ? 'bg-mint/20 text-mint' : accentPill(game.accent),
+          )}
+        >
+          {tab === 'room' ? t('home.onlineBadge') : t('home.play')}
+        </span>
+      </div>
+    </button>
   )
 }
 

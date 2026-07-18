@@ -59,6 +59,19 @@ const HOW_TO_KEYS: Record<string, { title: MessageKey; steps: MessageKey[] }> = 
       'howto.likely.4',
     ],
   },
+  act: {
+    title: 'howto.act.title',
+    steps: ['howto.act.1', 'howto.act.2', 'howto.act.3', 'howto.act.4'],
+  },
+  truthdare: {
+    title: 'howto.truthdare.title',
+    steps: [
+      'howto.truthdare.1',
+      'howto.truthdare.2',
+      'howto.truthdare.3',
+      'howto.truthdare.4',
+    ],
+  },
 }
 
 const gameNameKey: Record<GameId, MessageKey> = {
@@ -69,6 +82,8 @@ const gameNameKey: Record<GameId, MessageKey> = {
   story: 'games.story.name',
   bond: 'games.bond.name',
   likely: 'games.likely.name',
+  act: 'games.act.name',
+  truthdare: 'games.truthdare.name',
 }
 
 export function HowToScreen() {

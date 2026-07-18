@@ -1,7 +1,7 @@
 {
   "name": "Pass",
   "short_name": "Pass",
-  "description": "Party games for one device around the table. Impostor, Fuse, and more.",
+  "description": "Seven party games — Impostor, Spy, Fuse, Hot Seat, Story, Know You, Likely. One shared phone, or online rooms.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0C0D10",
