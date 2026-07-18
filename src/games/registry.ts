@@ -113,7 +113,7 @@ export const GAMES: GameDefinition[] = [
 ]
 
 /** Games with a working room / online path (everyone on their own phone). */
-export const ONLINE_GAME_IDS: GameId[] = ['impostor']
+export const ONLINE_GAME_IDS: GameId[] = ['impostor', 'spy', 'likely']
 
 export function getGame(id: GameId): GameDefinition {
   const game = GAMES.find((g) => g.id === id)

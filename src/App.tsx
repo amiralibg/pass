@@ -2,13 +2,23 @@ import { AnimatePresence, motion } from 'motion/react'
 import { PrefsSync } from './components/PrefsSync'
 import { getGame } from './games/registry'
 import { ImpostorRoomPlay } from './games/impostor/RoomPlay'
+import { LikelyRoomPlay } from './games/likely/RoomPlay'
+import { SpyRoomPlay } from './games/spy/RoomPlay'
 import { RoomBootstrap } from './room/RoomBootstrap'
+import { useRoom } from './room/store'
 import { useSession } from './store/session'
 import { HomeScreen } from './screens/HomeScreen'
 import { LobbyScreen } from './screens/LobbyScreen'
 import { HowToScreen } from './screens/HowToScreen'
 import { RoomJoinScreen } from './screens/RoomJoinScreen'
 import { RoomLobbyScreen } from './screens/RoomLobbyScreen'
+
+function RoomPlayRouter() {
+  const gameId = useRoom((s) => s.public?.gameId)
+  if (gameId === 'spy') return <SpyRoomPlay />
+  if (gameId === 'likely') return <LikelyRoomPlay />
+  return <ImpostorRoomPlay />
+}
 
 export default function App() {
   const screen = useSession((s) => s.screen)
@@ -38,7 +48,7 @@ export default function App() {
           {screen === 'play' && Play && <Play />}
           {screen === 'roomJoin' && <RoomJoinScreen />}
           {screen === 'roomLobby' && <RoomLobbyScreen />}
-          {screen === 'roomPlay' && <ImpostorRoomPlay />}
+          {screen === 'roomPlay' && <RoomPlayRouter />}
         </motion.div>
       </AnimatePresence>
     </>

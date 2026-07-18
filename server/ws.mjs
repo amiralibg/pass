@@ -7,11 +7,14 @@ import {
   joinRoom,
   leaveRoom,
   markDisconnected,
+  nextMost,
+  nextNever,
   onRoomChange,
   playAgain,
   renamePlayer,
   startRound,
   startVote,
+  toggleSip,
   updateSettings,
 } from './rooms.mjs'
 
@@ -147,9 +150,13 @@ function handleMessage(ws, meta, msg, socketsByRoom) {
         packId: typeof msg.packId === 'string' ? msg.packId : undefined,
         impostorCount:
           typeof msg.impostorCount === 'number' ? msg.impostorCount : undefined,
+        spyCount: typeof msg.spyCount === 'number' ? msg.spyCount : undefined,
         discussSeconds:
           typeof msg.discussSeconds === 'number' ? msg.discussSeconds : undefined,
         locale: msg.locale === 'fa' || msg.locale === 'en' ? msg.locale : undefined,
+        mode: msg.mode === 'never' || msg.mode === 'most' ? msg.mode : undefined,
+        heat: msg.heat === 'normal' || msg.heat === 'spicy' ? msg.heat : undefined,
+        rounds: typeof msg.rounds === 'number' ? msg.rounds : undefined,
       })
       break
     case 'startRound':
@@ -166,6 +173,19 @@ function handleMessage(ws, meta, msg, socketsByRoom) {
       break
     case 'castVote':
       castVote(room, meta.playerId, String(msg.targetId || ''))
+      break
+    case 'toggleSip':
+      toggleSip(
+        room,
+        meta.playerId,
+        typeof msg.delta === 'number' ? msg.delta : 1,
+      )
+      break
+    case 'nextNever':
+      nextNever(room, meta.playerId)
+      break
+    case 'nextMost':
+      nextMost(room, meta.playerId)
       break
     case 'playAgain':
       playAgain(room, meta.playerId)

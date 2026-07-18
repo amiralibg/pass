@@ -166,7 +166,7 @@ export function HomeScreen() {
                 type="button"
                 onClick={() => {
                   if (tab === 'room') {
-                    openRoomJoin()
+                    openRoomJoin(game.id)
                     return
                   }
                   selectGame(game.id)

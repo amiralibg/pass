@@ -6,12 +6,24 @@ import {
   readSessionIdentity,
   roomPath,
   writeSessionIdentity,
+  type OnlineGameId,
   type PrivateRoomView,
   type PublicRoomState,
   type ServerMessage,
 } from './types'
 
 type Status = 'idle' | 'connecting' | 'joined' | 'error'
+
+export type SettingsPatch = {
+  packId?: string
+  impostorCount?: number
+  spyCount?: number
+  discussSeconds?: number
+  locale?: 'en' | 'fa'
+  mode?: 'never' | 'most'
+  heat?: 'normal' | 'spicy'
+  rounds?: number
+}
 
 interface RoomStore {
   status: Status
@@ -23,22 +35,20 @@ interface RoomStore {
   pendingCode: string | null
 
   setName: (name: string) => void
-  createAndJoin: (name: string) => Promise<void>
+  createAndJoin: (name: string, gameId?: OnlineGameId) => Promise<void>
   join: (code: string, name: string) => void
   reconnectFromStorage: () => boolean
   bootstrapFromUrl: () => string | null
   rename: (name: string) => void
-  updateSettings: (patch: {
-    packId?: string
-    impostorCount?: number
-    discussSeconds?: number
-    locale?: 'en' | 'fa'
-  }) => void
+  updateSettings: (patch: SettingsPatch) => void
   startRound: () => void
   ackReveal: () => void
   forceDiscuss: () => void
   startVote: () => void
   castVote: (targetId: string) => void
+  toggleSip: (delta?: number) => void
+  nextNever: () => void
+  nextMost: () => void
   playAgain: () => void
   leave: () => void
   clearError: () => void
@@ -97,8 +107,12 @@ function handleServerMessage(msg: ServerMessage) {
   }
 }
 
-async function createRoomCode(): Promise<string> {
-  const res = await fetch('/api/rooms', { method: 'POST' })
+async function createRoomCode(gameId: OnlineGameId): Promise<string> {
+  const res = await fetch('/api/rooms', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ gameId }),
+  })
   if (!res.ok) throw new Error('Could not create room')
   const data = (await res.json()) as { code: string }
   return data.code
@@ -115,12 +129,12 @@ export const useRoom = create<RoomStore>((set, get) => ({
 
   setName: (name) => set({ name }),
 
-  createAndJoin: async (name) => {
+  createAndJoin: async (name, gameId = 'impostor') => {
     ensureSubscription()
     const trimmed = name.trim().slice(0, 24) || 'Player'
     set({ status: 'connecting', error: null, name: trimmed })
     try {
-      const code = await createRoomCode()
+      const code = await createRoomCode(gameId)
       roomSocket.connect()
       roomSocket.send({ type: 'hello', code, name: trimmed })
     } catch (err) {
@@ -189,6 +203,9 @@ export const useRoom = create<RoomStore>((set, get) => ({
   forceDiscuss: () => roomSocket.send({ type: 'forceDiscuss' }),
   startVote: () => roomSocket.send({ type: 'startVote' }),
   castVote: (targetId) => roomSocket.send({ type: 'castVote', targetId }),
+  toggleSip: (delta = 1) => roomSocket.send({ type: 'toggleSip', delta }),
+  nextNever: () => roomSocket.send({ type: 'nextNever' }),
+  nextMost: () => roomSocket.send({ type: 'nextMost' }),
   playAgain: () => roomSocket.send({ type: 'playAgain' }),
 
   leave: () => {

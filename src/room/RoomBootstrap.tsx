@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useRoom } from '../room/store'
-import { readSessionIdentity } from '../room/types'
+import { ROOM_PLAY_PHASES, readSessionIdentity } from '../room/types'
 import { useSession } from '../store/session'
 
 /** Deep-link /r/CODE and sessionStorage reconnect on boot. */
@@ -30,12 +30,7 @@ export function RoomBootstrap() {
 
   useEffect(() => {
     if (status !== 'joined' || !pub) return
-    if (
-      pub.phase === 'reveal' ||
-      pub.phase === 'discuss' ||
-      pub.phase === 'vote' ||
-      pub.phase === 'result'
-    ) {
+    if (ROOM_PLAY_PHASES.includes(pub.phase)) {
       openRoomPlay()
     } else {
       openRoomLobby()

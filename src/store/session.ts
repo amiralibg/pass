@@ -18,7 +18,7 @@ interface SessionState {
   startPlay: () => void
   backToLobby: () => void
   backToSetup: () => void
-  openRoomJoin: (code?: string) => void
+  openRoomJoin: (gameId?: GameId) => void
   openRoomLobby: () => void
   openRoomPlay: () => void
   setPlayMode: (mode: PlayMode) => void
@@ -96,11 +96,11 @@ export const useSession = create<SessionState>((set, get) => ({
   backToLobby: () => set({ screen: 'lobby' }),
   backToSetup: () => set({ screen: 'setup' }),
 
-  openRoomJoin: () =>
+  openRoomJoin: (gameId) =>
     set({
       playMode: 'room',
       screen: 'roomJoin',
-      selectedGameId: null,
+      selectedGameId: gameId ?? null,
       howToGameId: null,
     }),
 
