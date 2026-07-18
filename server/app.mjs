@@ -32,9 +32,11 @@ export function createApp(opts) {
     res.type('text/plain').send('ok')
   })
 
-  app.post('/api/rooms', (_req, res) => {
-    const room = createRoom()
-    res.status(201).json({ code: room.code })
+  app.post('/api/rooms', (req, res) => {
+    const gameId =
+      typeof req.body?.gameId === 'string' ? req.body.gameId : 'impostor'
+    const room = createRoom(undefined, gameId)
+    res.status(201).json({ code: room.code, gameId: room.gameId })
   })
 
   app.get('/api/rooms/:code', (req, res) => {

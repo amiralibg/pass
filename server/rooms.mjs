@@ -2,21 +2,22 @@ import {
   EMPTY_ROOM_TTL_MS,
   MAX_PLAYERS,
   MAX_ROOM_AGE_MS,
-  MIN_PLAYERS_IMPOSTOR,
   ROOM_CODE_ALPHABET,
   ROOM_CODE_LENGTH,
   ROOM_SWEEP_MS,
   normalizeRoomCode,
 } from '../shared/roomTypes.mjs'
 import {
-  dealRound,
-  defaultDiscussSeconds,
-  listPackIds,
-  privateView,
-  publicGameSnapshot,
-  suggestedImpostorCount,
-  tallyVotes,
-} from './games/impostor.mjs'
+  createInitialGame,
+  impostor,
+  isOnlineGameId,
+  likely,
+  listPackIdsFor,
+  minPlayersFor,
+  privateViewFor,
+  publicGameSnapshotFor,
+  spy,
+} from './games/catalog.mjs'
 
 /** @typedef {{ id: string, name: string, connected: boolean }} RoomPlayer */
 /**
@@ -25,28 +26,8 @@ import {
  *   hostId: string,
  *   players: RoomPlayer[],
  *   phase: import('../shared/roomTypes.mjs').RoomPhase,
- *   gameId: 'impostor' | null,
- *   game: null | {
- *     id: 'impostor',
- *     settings: {
- *       packId: string,
- *       impostorCount: number,
- *       discussSeconds: number,
- *       locale: 'en' | 'fa',
- *     },
- *     round: null | {
- *       phase: 'reveal' | 'discuss' | 'vote' | 'result',
- *       packId: string,
- *       impostorCount: number,
- *       discussSeconds: number,
- *       secretWord: string,
- *       impostorIds: string[],
- *       discussEndsAt: number | null,
- *       votes: Record<string, string>,
- *       revealAcks: Record<string, true>,
- *       eliminatedId: string | null,
- *     },
- *   },
+ *   gameId: import('./games/catalog.mjs').OnlineGameId,
+ *   game: any,
  *   createdAt: number,
  *   lastActiveAt: number,
  *   discussTimer: ReturnType<typeof setTimeout> | null,
@@ -109,8 +90,10 @@ function clearDiscussTimer(room) {
 
 /**
  * @param {string} [preferred]
+ * @param {string} [gameId]
  */
-export function createRoom(preferred) {
+export function createRoom(preferred, gameId = 'impostor') {
+  const resolved = isOnlineGameId(gameId) ? gameId : 'impostor'
   let code = preferred ? normalizeRoomCode(preferred) : ''
   if (!code || rooms.has(code)) {
     do {
@@ -124,17 +107,8 @@ export function createRoom(preferred) {
     hostId: '',
     players: [],
     phase: 'lobby',
-    gameId: 'impostor',
-    game: {
-      id: 'impostor',
-      settings: {
-        packId: listPackIds()[0] ?? 'everyday',
-        impostorCount: 1,
-        discussSeconds: 120,
-        locale: 'en',
-      },
-      round: null,
-    },
+    gameId: resolved,
+    game: createInitialGame(resolved),
     createdAt: Date.now(),
     lastActiveAt: Date.now(),
     discussTimer: null,
@@ -207,11 +181,15 @@ export function markDisconnected(room, playerId) {
  * @param {Room} room
  */
 function syncDefaultSettings(room) {
-  if (!room.game || room.game.id !== 'impostor') return
-  const n = room.players.length
-  if (room.phase === 'lobby' || room.phase === 'setup') {
-    room.game.settings.impostorCount = suggestedImpostorCount(Math.max(n, 3))
-    room.game.settings.discussSeconds = defaultDiscussSeconds(Math.max(n, 3))
+  const n = Math.max(room.players.length, minPlayersFor(room.gameId))
+  if (room.phase !== 'lobby' && room.phase !== 'setup') return
+
+  if (room.gameId === 'impostor' && room.game?.id === 'impostor') {
+    room.game.settings.impostorCount = impostor.suggestedImpostorCount(n)
+    room.game.settings.discussSeconds = impostor.defaultDiscussSeconds(n)
+  } else if (room.gameId === 'spy' && room.game?.id === 'spy') {
+    room.game.settings.spyCount = spy.suggestedSpyCount(n)
+    room.game.settings.discussSeconds = spy.defaultDiscussSeconds(n)
   }
 }
 
@@ -230,31 +208,68 @@ export function renamePlayer(room, playerId, name) {
 /**
  * @param {Room} room
  * @param {string} hostId
- * @param {Partial<{ packId: string, impostorCount: number, discussSeconds: number, locale: 'en' | 'fa' }>} settings
+ * @param {Record<string, unknown>} settings
  */
 export function updateSettings(room, hostId, settings) {
   assertHost(room, hostId)
   if (room.phase !== 'lobby' && room.phase !== 'setup') {
     throw Object.assign(new Error('Cannot change settings now'), { code: 'BAD_PHASE' })
   }
-  if (!room.game || room.game.id !== 'impostor') return
-  const next = { ...room.game.settings }
-  if (settings.packId && listPackIds().includes(settings.packId)) {
-    next.packId = settings.packId
+  if (!room.game) return
+
+  if (room.gameId === 'impostor' && room.game.id === 'impostor') {
+    const next = { ...room.game.settings }
+    if (typeof settings.packId === 'string' && impostor.listPackIds().includes(settings.packId)) {
+      next.packId = settings.packId
+    }
+    if (typeof settings.impostorCount === 'number') {
+      next.impostorCount = Math.max(
+        1,
+        Math.min(settings.impostorCount, Math.max(1, room.players.length - 1)),
+      )
+    }
+    if (typeof settings.discussSeconds === 'number') {
+      next.discussSeconds = Math.max(30, Math.min(600, Math.round(settings.discussSeconds)))
+    }
+    if (settings.locale === 'en' || settings.locale === 'fa') {
+      next.locale = settings.locale
+    }
+    room.game.settings = next
+  } else if (room.gameId === 'spy' && room.game.id === 'spy') {
+    const next = { ...room.game.settings }
+    if (typeof settings.packId === 'string' && spy.listPackIds().includes(settings.packId)) {
+      next.packId = settings.packId
+    }
+    if (typeof settings.spyCount === 'number') {
+      next.spyCount = Math.max(
+        1,
+        Math.min(settings.spyCount, Math.max(1, room.players.length - 1)),
+      )
+    }
+    if (typeof settings.discussSeconds === 'number') {
+      next.discussSeconds = Math.max(30, Math.min(600, Math.round(settings.discussSeconds)))
+    }
+    if (settings.locale === 'en' || settings.locale === 'fa') {
+      next.locale = settings.locale
+    }
+    room.game.settings = next
+  } else if (room.gameId === 'likely' && room.game.id === 'likely') {
+    const next = { ...room.game.settings }
+    if (settings.mode === 'never' || settings.mode === 'most') {
+      next.mode = settings.mode
+    }
+    if (settings.heat === 'normal' || settings.heat === 'spicy') {
+      next.heat = settings.heat
+    }
+    if (typeof settings.rounds === 'number') {
+      next.rounds = Math.max(3, Math.min(20, Math.round(settings.rounds)))
+    }
+    if (settings.locale === 'en' || settings.locale === 'fa') {
+      next.locale = settings.locale
+    }
+    room.game.settings = next
   }
-  if (typeof settings.impostorCount === 'number') {
-    next.impostorCount = Math.max(
-      1,
-      Math.min(settings.impostorCount, Math.max(1, room.players.length - 1)),
-    )
-  }
-  if (typeof settings.discussSeconds === 'number') {
-    next.discussSeconds = Math.max(30, Math.min(600, Math.round(settings.discussSeconds)))
-  }
-  if (settings.locale === 'en' || settings.locale === 'fa') {
-    next.locale = settings.locale
-  }
-  room.game.settings = next
+
   room.phase = 'setup'
   notify(room)
 }
@@ -265,30 +280,51 @@ export function updateSettings(room, hostId, settings) {
  */
 export function startRound(room, hostId) {
   assertHost(room, hostId)
-  if (!room.game || room.game.id !== 'impostor') {
+  if (!room.game) {
     throw Object.assign(new Error('No game'), { code: 'NO_GAME' })
   }
-  if (room.players.length < MIN_PLAYERS_IMPOSTOR) {
-    throw Object.assign(new Error(`Need at least ${MIN_PLAYERS_IMPOSTOR} players`), {
+  const min = minPlayersFor(room.gameId)
+  if (room.players.length < min) {
+    throw Object.assign(new Error(`Need at least ${min} players`), {
       code: 'NEED_PLAYERS',
     })
   }
 
   clearDiscussTimer(room)
+  const playerIds = room.players.map((p) => p.id)
   const { settings } = room.game
-  const dealt = dealRound({
-    playerIds: room.players.map((p) => p.id),
-    packId: settings.packId,
-    impostorCount: settings.impostorCount,
-    discussSeconds: settings.discussSeconds,
-    locale: settings.locale,
-  })
 
-  room.game.round = {
-    ...dealt,
-    revealAcks: {},
+  if (room.gameId === 'impostor') {
+    const dealt = impostor.dealRound({
+      playerIds,
+      packId: settings.packId,
+      impostorCount: settings.impostorCount,
+      discussSeconds: settings.discussSeconds,
+      locale: settings.locale,
+    })
+    room.game.round = { ...dealt, revealAcks: {} }
+    room.phase = 'reveal'
+  } else if (room.gameId === 'spy') {
+    const dealt = spy.dealRound({
+      playerIds,
+      packId: settings.packId,
+      spyCount: settings.spyCount,
+      discussSeconds: settings.discussSeconds,
+      locale: settings.locale,
+    })
+    room.game.round = { ...dealt, revealAcks: {} }
+    room.phase = 'reveal'
+  } else if (room.gameId === 'likely') {
+    const dealt = likely.dealRound({
+      playerIds,
+      mode: settings.mode,
+      heat: settings.heat,
+      rounds: settings.rounds,
+    })
+    room.game.round = dealt
+    room.phase = dealt.phase
   }
-  room.phase = 'reveal'
+
   notify(room)
 }
 
@@ -355,7 +391,6 @@ export function startVote(room, actorId) {
     throw Object.assign(new Error('Not in discuss'), { code: 'BAD_PHASE' })
   }
   if (actorId && actorId !== room.hostId) {
-    // Guests can request skip only if timer already expired
     const endsAt = room.game?.round?.discussEndsAt ?? 0
     if (Date.now() < endsAt) {
       assertHost(room, actorId)
@@ -384,6 +419,11 @@ function beginVote(room) {
  * @param {string} targetId
  */
 export function castVote(room, voterId, targetId) {
+  if (room.gameId === 'likely') {
+    castLikelyVote(room, voterId, targetId)
+    return
+  }
+
   const round = room.game?.round
   if (!round || room.phase !== 'vote') {
     throw Object.assign(new Error('Not in vote'), { code: 'BAD_PHASE' })
@@ -401,9 +441,104 @@ export function castVote(room, voterId, targetId) {
 
   const allVoted = room.players.every((p) => round.votes[p.id])
   if (allVoted) {
-    round.eliminatedId = tallyVotes(round.votes)
+    const tally =
+      room.gameId === 'spy' ? spy.tallyVotes(round.votes) : impostor.tallyVotes(round.votes)
+    round.eliminatedId = tally
     round.phase = 'result'
     room.phase = 'result'
+  }
+  notify(room)
+}
+
+/**
+ * @param {Room} room
+ * @param {string} voterId
+ * @param {string} targetId
+ */
+function castLikelyVote(room, voterId, targetId) {
+  const round = room.game?.round
+  if (!round || room.phase !== 'mostVote' || round.mode !== 'most') {
+    throw Object.assign(new Error('Not in vote'), { code: 'BAD_PHASE' })
+  }
+  if (!room.players.some((p) => p.id === voterId)) {
+    throw Object.assign(new Error('Voter not found'), { code: 'NOT_FOUND' })
+  }
+  if (!room.players.some((p) => p.id === targetId)) {
+    throw Object.assign(new Error('Invalid target'), { code: 'BAD_TARGET' })
+  }
+  if (round.votes[voterId]) {
+    throw Object.assign(new Error('Already voted'), { code: 'ALREADY_VOTED' })
+  }
+  round.votes[voterId] = targetId
+
+  const allVoted = room.players.every((p) => round.votes[p.id])
+  if (allVoted) {
+    const { received, lastRoundTop } = likely.applyMostTally(round.votes, round.received)
+    round.received = received
+    round.lastRoundTop = lastRoundTop
+    round.phase = 'mostTally'
+    room.phase = 'mostTally'
+  }
+  notify(room)
+}
+
+/**
+ * @param {Room} room
+ * @param {string} playerId
+ * @param {number} [delta]
+ */
+export function toggleSip(room, playerId, delta = 1) {
+  const round = room.game?.round
+  if (!round || room.phase !== 'never' || round.mode !== 'never') {
+    throw Object.assign(new Error('Not in never mode'), { code: 'BAD_PHASE' })
+  }
+  if (!room.players.some((p) => p.id === playerId)) {
+    throw Object.assign(new Error('Player not found'), { code: 'NOT_FOUND' })
+  }
+  const step = delta < 0 ? -1 : 1
+  const current = round.sips[playerId] ?? 0
+  round.sips[playerId] = Math.max(0, current + step)
+  notify(room)
+}
+
+/**
+ * @param {Room} room
+ * @param {string} hostId
+ */
+export function nextNever(room, hostId) {
+  assertHost(room, hostId)
+  const round = room.game?.round
+  if (!round || room.phase !== 'never' || round.mode !== 'never') {
+    throw Object.assign(new Error('Not in never mode'), { code: 'BAD_PHASE' })
+  }
+  if (round.roundIndex + 1 >= round.queue.length) {
+    round.phase = 'results'
+    room.phase = 'results'
+  } else {
+    round.roundIndex += 1
+  }
+  notify(room)
+}
+
+/**
+ * @param {Room} room
+ * @param {string} hostId
+ */
+export function nextMost(room, hostId) {
+  assertHost(room, hostId)
+  const round = room.game?.round
+  if (!round || room.phase !== 'mostTally' || round.mode !== 'most') {
+    throw Object.assign(new Error('Not in tally'), { code: 'BAD_PHASE' })
+  }
+  if (round.roundIndex + 1 >= round.queue.length) {
+    round.phase = 'results'
+    room.phase = 'results'
+  } else {
+    round.roundIndex += 1
+    round.votes = {}
+    round.lastRoundTop = []
+    round.phase = 'mostVote'
+    room.phase = 'mostVote'
   }
   notify(room)
 }
@@ -437,7 +572,8 @@ export function leaveRoom(room, playerId) {
     rooms.delete(room.code)
     return
   }
-  if (room.phase !== 'lobby' && room.phase !== 'setup' && room.players.length < MIN_PLAYERS_IMPOSTOR) {
+  const min = minPlayersFor(room.gameId)
+  if (room.phase !== 'lobby' && room.phase !== 'setup' && room.players.length < min) {
     if (room.game) room.game.round = null
     room.phase = 'lobby'
   }
@@ -460,12 +596,19 @@ function assertHost(room, playerId) {
  */
 export function buildClientState(room, playerId) {
   const round = room.game?.round
-  const publicGame = publicGameSnapshot(room)
+  const publicGame = publicGameSnapshotFor(room)
+
   if (publicGame?.round && round) {
-    publicGame.round.ackCount = Object.keys(round.revealAcks).length
-    publicGame.round.playerCount = room.players.length
-    publicGame.round.youAcked = Boolean(round.revealAcks[playerId])
-    publicGame.round.youVoted = Boolean(round.votes[playerId])
+    if (room.gameId === 'impostor' || room.gameId === 'spy') {
+      publicGame.round.ackCount = Object.keys(round.revealAcks ?? {}).length
+      publicGame.round.playerCount = room.players.length
+      publicGame.round.youAcked = Boolean(round.revealAcks?.[playerId])
+      publicGame.round.youVoted = Boolean(round.votes?.[playerId])
+    } else if (room.gameId === 'likely') {
+      publicGame.round.playerCount = room.players.length
+      publicGame.round.youVoted = Boolean(round.votes?.[playerId])
+      publicGame.round.yourSips = round.sips?.[playerId] ?? 0
+    }
   }
 
   return {
@@ -480,10 +623,10 @@ export function buildClientState(room, playerId) {
         connected: p.connected,
       })),
       youAreHost: playerId === room.hostId,
-      packs: listPackIds(),
+      packs: listPackIdsFor(room.gameId),
       game: publicGame,
     },
-    private: privateView(room, playerId),
+    private: privateViewFor(room, playerId),
   }
 }
 

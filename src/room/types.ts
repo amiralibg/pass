@@ -1,3 +1,5 @@
+export type OnlineGameId = 'impostor' | 'spy' | 'likely'
+
 export type RoomPhase =
   | 'lobby'
   | 'setup'
@@ -5,6 +7,10 @@ export type RoomPhase =
   | 'discuss'
   | 'vote'
   | 'result'
+  | 'never'
+  | 'mostVote'
+  | 'mostTally'
+  | 'results'
 
 export interface RoomPlayer {
   id: string
@@ -16,6 +22,20 @@ export interface ImpostorSettings {
   packId: string
   impostorCount: number
   discussSeconds: number
+  locale: 'en' | 'fa'
+}
+
+export interface SpySettings {
+  packId: string
+  spyCount: number
+  discussSeconds: number
+  locale: 'en' | 'fa'
+}
+
+export interface LikelySettings {
+  mode: 'never' | 'most'
+  heat: 'normal' | 'spicy'
+  rounds: number
   locale: 'en' | 'fa'
 }
 
@@ -36,25 +56,75 @@ export interface ImpostorPublicRound {
   youVoted?: boolean
 }
 
+export interface SpyPublicRound {
+  phase: 'reveal' | 'discuss' | 'vote' | 'result'
+  packId: string
+  spyCount: number
+  discussSeconds: number
+  discussEndsAt: number | null
+  votes: Record<string, string>
+  voteCount: number
+  eliminatedId: string | null
+  locationName: string | null
+  spyIds: string[] | null
+  ackCount?: number
+  playerCount?: number
+  youAcked?: boolean
+  youVoted?: boolean
+}
+
+export interface LikelyPublicRound {
+  phase: 'never' | 'mostVote' | 'mostTally' | 'results'
+  mode: 'never' | 'most'
+  heat: 'normal' | 'spicy'
+  roundIndex: number
+  totalRounds: number
+  promptText: string
+  promptId: string | null
+  sips: Record<string, number> | null
+  received: Record<string, number> | null
+  votes: Record<string, string>
+  voteCount: number
+  lastRoundTop: string[]
+  playerCount?: number
+  youVoted?: boolean
+  yourSips?: number
+}
+
+export type PublicGameState =
+  | {
+      id: 'impostor'
+      settings: ImpostorSettings
+      round?: ImpostorPublicRound
+    }
+  | {
+      id: 'spy'
+      settings: SpySettings
+      round?: SpyPublicRound
+    }
+  | {
+      id: 'likely'
+      settings: LikelySettings
+      round?: LikelyPublicRound
+    }
+
 export interface PublicRoomState {
   code: string
   hostId: string
   phase: RoomPhase
-  gameId: 'impostor' | null
+  gameId: OnlineGameId | null
   players: RoomPlayer[]
   youAreHost: boolean
   packs: string[]
-  game: null | {
-    id: 'impostor'
-    settings: ImpostorSettings
-    round?: ImpostorPublicRound
-  }
+  game: PublicGameState | null
 }
 
 export interface PrivateRoomView {
   gameId?: string | null
-  role: 'impostor' | 'crew' | null
-  secretWord: string | null
+  role?: 'impostor' | 'crew' | 'spy' | null
+  secretWord?: string | null
+  locationName?: string | null
+  playerRole?: string | null
 }
 
 export type ServerMessage =
@@ -80,20 +150,38 @@ export type ClientMessage =
       type: 'updateSettings'
       packId?: string
       impostorCount?: number
+      spyCount?: number
       discussSeconds?: number
       locale?: 'en' | 'fa'
+      mode?: 'never' | 'most'
+      heat?: 'normal' | 'spicy'
+      rounds?: number
     }
   | { type: 'startRound' }
   | { type: 'ackReveal' }
   | { type: 'forceDiscuss' }
   | { type: 'startVote' }
   | { type: 'castVote'; targetId: string }
+  | { type: 'toggleSip'; delta?: number }
+  | { type: 'nextNever' }
+  | { type: 'nextMost' }
   | { type: 'playAgain' }
   | { type: 'leave' }
 
 export const STORAGE_ROOM_CODE = 'pass-room-code'
 export const STORAGE_PLAYER_ID = 'pass-player-id'
 export const STORAGE_PLAYER_NAME = 'pass-player-name'
+
+export const ROOM_PLAY_PHASES: RoomPhase[] = [
+  'reveal',
+  'discuss',
+  'vote',
+  'result',
+  'never',
+  'mostVote',
+  'mostTally',
+  'results',
+]
 
 export function parseRoomPath(pathname: string): string | null {
   const match = String(pathname || '').match(/^\/r\/([A-Za-z0-9]{3,8})\/?$/i)

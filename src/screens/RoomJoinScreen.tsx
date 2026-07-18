@@ -3,17 +3,32 @@ import { Link2, Plus, Users } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Screen } from '../components/ui/Screen'
 import { TopBar } from '../components/ui/TopBar'
+import { ONLINE_GAME_IDS } from '../games/registry'
+import type { GameId } from '../games/types'
 import { useT } from '../i18n/useT'
+import type { MessageKey } from '../i18n/messages'
 import { useRoom } from '../room/store'
-import { readSessionIdentity } from '../room/types'
+import { readSessionIdentity, type OnlineGameId } from '../room/types'
 import { useSession } from '../store/session'
 
 type Step = 'name' | 'room'
+
+const gameNameKey: Record<OnlineGameId, MessageKey> = {
+  impostor: 'games.impostor.name',
+  spy: 'games.spy.name',
+  likely: 'games.likely.name',
+}
+
+function asOnlineGameId(id: GameId | null): OnlineGameId {
+  if (id && (ONLINE_GAME_IDS as string[]).includes(id)) return id as OnlineGameId
+  return 'impostor'
+}
 
 export function RoomJoinScreen() {
   const t = useT()
   const goHome = useSession((s) => s.goHome)
   const openRoomLobby = useSession((s) => s.openRoomLobby)
+  const selectedGameId = useSession((s) => s.selectedGameId)
   const status = useRoom((s) => s.status)
   const error = useRoom((s) => s.error)
   const pub = useRoom((s) => s.public)
@@ -21,6 +36,7 @@ export function RoomJoinScreen() {
   const join = useRoom((s) => s.join)
   const clearError = useRoom((s) => s.clearError)
   const bootstrapFromUrl = useRoom((s) => s.bootstrapFromUrl)
+  const createGameId = asOnlineGameId(selectedGameId)
 
   const stored = readSessionIdentity()
   const urlCode = bootstrapFromUrl()
@@ -50,7 +66,7 @@ export function RoomJoinScreen() {
     clearError()
     setBusy(true)
     try {
-      await createAndJoin(name)
+      await createAndJoin(name, createGameId)
     } finally {
       setBusy(false)
     }
@@ -177,6 +193,9 @@ export function RoomJoinScreen() {
           </h2>
           <p className="mt-2 text-fog-dim">
             {t('room.join.roomHint', { name: name.trim() })}
+          </p>
+          <p className="mt-3 text-sm font-medium text-mint">
+            {t(gameNameKey[createGameId])}
           </p>
 
           <div className="mt-8 space-y-3">

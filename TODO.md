@@ -38,8 +38,9 @@ Keep **Table** as the core (one shared device). Add **Room** as a second path: c
 ### Port games online (order)
 
 - [x] Impostor first (private reveal + shared vote)
-- [ ] Spy
-- [ ] Hot Seat, Know You, Likely
+- [x] Spy
+- [x] Likely
+- [ ] Hot Seat, Know You
 - [ ] Story, Fuse (shared timer / turn assignment)
 
 ### Later polish

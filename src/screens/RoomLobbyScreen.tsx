@@ -4,20 +4,32 @@ import { Button } from '../components/ui/Button'
 import { Screen } from '../components/ui/Screen'
 import { Stepper } from '../components/ui/Stepper'
 import { TopBar } from '../components/ui/TopBar'
+import { WORD_PACKS, getPackWords, suggestedImpostorCount } from '../games/impostor/words'
+import { countLikelyPrompts } from '../games/likely/prompts'
+import {
+  LOCATION_PACKS,
+  getPackLocations,
+  suggestedSpyCount,
+} from '../games/spy/locations'
 import { useT } from '../i18n/useT'
 import type { MessageKey } from '../i18n/messages'
 import { cn } from '../lib/cn'
 import { useRoom } from '../room/store'
-import { roomPath } from '../room/types'
+import { ROOM_PLAY_PHASES, roomPath } from '../room/types'
 import { usePrefs } from '../store/prefs'
 import { useSession } from '../store/session'
-import { WORD_PACKS, getPackWords, suggestedImpostorCount } from '../games/impostor/words'
 
-const packNameKey: Record<string, MessageKey> = {
+const impostorPackNameKey: Record<string, MessageKey> = {
   everyday: 'packs.everyday',
   food: 'packs.food',
   places: 'packs.places',
   wild: 'packs.wild',
+}
+
+const spyPackNameKey: Record<string, MessageKey> = {
+  classic: 'packs.classic',
+  trip: 'packs.trip',
+  nightlife: 'packs.nightlife',
 }
 
 export function RoomLobbyScreen() {
@@ -49,10 +61,16 @@ export function RoomLobbyScreen() {
       return
     }
     if (!pub) return
-    if (pub.phase === 'reveal' || pub.phase === 'discuss' || pub.phase === 'vote' || pub.phase === 'result') {
+    if (ROOM_PLAY_PHASES.includes(pub.phase)) {
       openRoomPlay()
     }
   }, [status, pub, openRoomPlay, openRoomJoin])
+
+  useEffect(() => {
+    if (!pub?.youAreHost || pub.phase === 'reveal') return
+    if (pub.phase !== 'lobby' && pub.phase !== 'setup') return
+    updateSettings({ locale })
+  }, [pub?.code, pub?.youAreHost, locale]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!pub) {
     return (
@@ -63,9 +81,11 @@ export function RoomLobbyScreen() {
     )
   }
 
+  const gameId = pub.gameId
   const settings = pub.game?.settings
   const players = pub.players
-  const canStart = pub.youAreHost && players.length >= 3
+  const minPlayers = gameId === 'likely' ? 2 : 3
+  const canStart = pub.youAreHost && players.length >= minPlayers
   const shareUrl =
     typeof window !== 'undefined'
       ? `${window.location.origin}${roomPath(pub.code)}`
@@ -175,7 +195,7 @@ export function RoomLobbyScreen() {
         </ul>
       </div>
 
-      {pub.youAreHost && settings && (
+      {pub.youAreHost && settings && gameId === 'impostor' && settings && 'impostorCount' in settings && (
         <div className="mt-8 space-y-5">
           <div>
             <p className="label-caps text-sm font-medium text-fog-mute">
@@ -197,7 +217,7 @@ export function RoomLobbyScreen() {
                     )}
                   >
                     <span className="block font-semibold text-fog">
-                      {t(packNameKey[pack.id] ?? 'packs.everyday')}
+                      {t(impostorPackNameKey[pack.id] ?? 'packs.everyday')}
                     </span>
                     <span className="mt-0.5 block text-xs text-fog-mute">
                       {t('impostor.setup.wordsCount', { count: wordCount })}
@@ -239,6 +259,153 @@ export function RoomLobbyScreen() {
               />
             </div>
           </div>
+        </div>
+      )}
+
+      {pub.youAreHost && settings && gameId === 'spy' && 'spyCount' in settings && (
+        <div className="mt-8 space-y-5">
+          <div>
+            <p className="label-caps text-sm font-medium text-fog-mute">
+              {t('spy.setup.locationPack')}
+            </p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {LOCATION_PACKS.map((pack) => {
+                const locationCount = getPackLocations(pack.id).length
+                return (
+                  <button
+                    key={pack.id}
+                    type="button"
+                    onClick={() => updateSettings({ packId: pack.id, locale })}
+                    className={cn(
+                      'rounded-2xl border px-4 py-3 text-start transition-colors',
+                      settings.packId === pack.id
+                        ? 'border-mint/50 bg-mint/15 text-fog'
+                        : 'border-fog/10 bg-ink/25 text-fog-dim hover:border-fog/20',
+                    )}
+                  >
+                    <span className="block font-semibold text-fog">
+                      {t(spyPackNameKey[pack.id] ?? 'packs.classic')}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-fog-mute">
+                      {t('spy.setup.locationsCount', { count: locationCount })}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div>
+            <p className="label-caps text-sm font-medium text-fog-mute">
+              {t('spy.setup.spies')}
+            </p>
+            <p className="mt-1 text-sm text-fog-dim">
+              {t('spy.setup.summary', {
+                count: players.length,
+                suggested: suggestedSpyCount(Math.max(players.length, 3)),
+                plural: suggestedSpyCount(Math.max(players.length, 3)) === 1 ? '' : 's',
+              })}
+            </p>
+            <div className="mt-2 space-y-2">
+              <Stepper
+                label={t('spy.setup.spies')}
+                hint={t('spy.setup.spiesHint')}
+                value={settings.spyCount}
+                min={1}
+                max={Math.max(1, players.length - 1)}
+                onChange={(n) => updateSettings({ spyCount: n })}
+              />
+              <Stepper
+                label={t('spy.setup.discussion')}
+                hint={t('spy.setup.discussionHint')}
+                value={Math.round(settings.discussSeconds / 60)}
+                min={1}
+                max={5}
+                suffix="m"
+                onChange={(m) => updateSettings({ discussSeconds: m * 60 })}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {pub.youAreHost && settings && gameId === 'likely' && 'mode' in settings && (
+        <div className="mt-8 space-y-5">
+          <div>
+            <p className="label-caps text-sm font-medium text-fog-mute">
+              {t('likely.setup.mode')}
+            </p>
+            <div className="mt-2 grid grid-cols-1 gap-2">
+              {(['never', 'most'] as const).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => updateSettings({ mode, locale })}
+                  className={cn(
+                    'rounded-2xl border px-4 py-3 text-start transition-colors',
+                    settings.mode === mode
+                      ? 'border-gold/50 bg-gold/15 text-fog'
+                      : 'border-fog/10 bg-ink/25 text-fog-dim hover:border-fog/20',
+                  )}
+                >
+                  <span className="block font-semibold text-fog">
+                    {mode === 'never' ? t('likely.setup.never') : t('likely.setup.most')}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-fog-mute">
+                    {mode === 'never'
+                      ? t('likely.setup.neverHint')
+                      : t('likely.setup.mostHint')}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="label-caps text-sm font-medium text-fog-mute">
+              {t('likely.setup.heat')}
+            </p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {(['normal', 'spicy'] as const).map((heat) => (
+                <button
+                  key={heat}
+                  type="button"
+                  onClick={() => updateSettings({ heat, locale })}
+                  className={cn(
+                    'rounded-2xl border px-4 py-3 text-start transition-colors',
+                    settings.heat === heat
+                      ? heat === 'spicy'
+                        ? 'border-spark/50 bg-spark/15 text-fog'
+                        : 'border-gold/50 bg-gold/15 text-fog'
+                      : 'border-fog/10 bg-ink/25 text-fog-dim hover:border-fog/20',
+                  )}
+                >
+                  <span className="block font-semibold text-fog">
+                    {heat === 'normal' ? t('likely.setup.normal') : t('likely.setup.spicy')}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-fog-mute">
+                    {heat === 'normal'
+                      ? t('likely.setup.normalHint')
+                      : t('likely.setup.spicyHint')}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-fog-mute">
+              {t('likely.setup.poolCount', {
+                count: countLikelyPrompts(settings.mode, settings.heat),
+              })}
+            </p>
+          </div>
+
+          <Stepper
+            label={t('likely.setup.rounds')}
+            hint={t('likely.setup.roundsHint')}
+            value={settings.rounds}
+            min={3}
+            max={20}
+            onChange={(n) => updateSettings({ rounds: n })}
+          />
         </div>
       )}
 
