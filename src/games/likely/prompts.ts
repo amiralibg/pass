@@ -1,8 +1,9 @@
 import packs from '../../../shared/likelyPrompts.json'
 import type { Locale } from '../../store/prefs'
+import type { Heat } from '../types'
 
 export type LikelyMode = 'never' | 'most'
-export type LikelyHeat = 'normal' | 'spicy'
+export type LikelyHeat = Heat
 
 export interface LikelyPrompt {
   id: string

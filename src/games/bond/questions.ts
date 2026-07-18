@@ -1798,6 +1798,31 @@ export const BOND_PACKS: BondPack[] = [
       },
     ],
   },
+  {
+    id: 'spicy',
+    questions: [
+      { id: 's1', prompt: { en: 'Ideal first move?', fa: 'حرکت اول ایده‌آل؟' }, choices: { en: ['A bold kiss', 'Slow tease', 'Whisper something', 'Let them lead'], fa: ['یک بوسهٔ جسورانه', 'ناز و اِهِن‌واِهِن آروم', 'یک چیز در گوشی', 'بذار اون پیش‌قدم شه'] } },
+      { id: 's2', prompt: { en: 'Lights on or off?', fa: 'چراغ روشن یا خاموش؟' }, choices: { en: ['On, always', 'Off', 'Dim / candles', 'Depends on the mood'], fa: ['همیشه روشن', 'خاموش', 'کم‌نور / شمع', 'بستگی به حال‌وهوا'] } },
+      { id: 's3', prompt: { en: 'Biggest turn-on?', fa: 'بزرگ‌ترین محرک؟' }, choices: { en: ['Confidence', 'A good voice', 'Sense of humor', 'Physical touch'], fa: ['اعتمادبه‌نفس', 'یک صدای خوب', 'حس شوخ‌طبعی', 'تماس فیزیکی'] } },
+      { id: 's4', prompt: { en: 'Most likely flirting style?', fa: 'محتمل‌ترین سبک لاس زدن؟' }, choices: { en: ['Direct & bold', 'Playful teasing', 'Shy but obvious', 'Smooth talker'], fa: ['مستقیم و جسور', 'شوخی و سربه‌سر گذاشتن', 'خجالتی ولی تابلو', 'زبون‌باز'] } },
+      { id: 's5', prompt: { en: 'Ideal date that leads somewhere?', fa: 'قرار ایده‌آلی که یه جایی ختم شه؟' }, choices: { en: ['Night in together', 'Dancing out', 'Rooftop & wine', 'Road trip escape'], fa: ['یه شب دونفره تو خونه', 'رقص بیرون', 'پشت‌بوم و شراب', 'فرار با یه سفر جاده‌ای'] } },
+      { id: 's6', prompt: { en: 'Riskiest place they’d kiss?', fa: 'پرریسک‌ترین جایی که می‌بوسه؟' }, choices: { en: ['Elevator', 'Back of a taxi', 'Balcony at a party', 'Never risky'], fa: ['آسانسور', 'صندلی عقب تاکسی', 'بالکن یه مهمونی', 'هیچ‌وقت ریسکی نه'] } },
+      { id: 's7', prompt: { en: 'Their guilty pleasure?', fa: 'لذت گناه‌آلودشون؟' }, choices: { en: ['Sexting', 'Late-night calls', 'Jealousy games', 'Cheesy romance'], fa: ['سکسی‌چت', 'تماس‌های نیمه‌شب', 'بازی‌های حسادت', 'عاشقانهٔ آبکی'] } },
+      { id: 's8', prompt: { en: 'Dominant or submissive?', fa: 'سلطه‌گر یا تسلیم؟' }, choices: { en: ['Dominant', 'Submissive', 'Switch', 'Depends who’s asking'], fa: ['سلطه‌گر', 'تسلیم', 'هردو (سوییچ)', 'بستگی داره کی بپرسه'] } },
+      { id: 's9', prompt: { en: 'Most likely to say yes to?', fa: 'محتمل‌ترین چیزی که بهش بله می‌گه؟' }, choices: { en: ['A spicy dare', 'Skinny dipping', 'A midnight rendezvous', 'A daring photo'], fa: ['یه جرئت تند', 'شنای لخت', 'یه قرار نیمه‌شب', 'یه عکس جسورانه'] } },
+      { id: 's10', prompt: { en: 'Their idea of foreplay?', fa: 'تعریفشون از پیش‌نوازش؟' }, choices: { en: ['Deep conversation', 'Teasing all day', 'A slow dance', 'Just go for it'], fa: ['یه گفتگوی عمیق', 'تمام روز سربه‌سر گذاشتن', 'یه رقص آروم', 'مستقیم سر اصل مطلب'] } },
+      { id: 's11', prompt: { en: 'Text back speed after a spicy message?', fa: 'سرعت جواب بعد از یه پیام داغ؟' }, choices: { en: ['Instant', 'Plays it cool', 'Leaves you on read', 'Calls instead'], fa: ['آنی', 'خونسرد بازی می‌کنه', 'سین می‌کنه بی‌جواب', 'به‌جاش زنگ می‌زنه'] } },
+      { id: 's12', prompt: { en: 'Most attractive trait in a partner?', fa: 'جذاب‌ترین ویژگی در یه پارتنر؟' }, choices: { en: ['Confidence', 'Mystery', 'Playfulness', 'Intensity'], fa: ['اعتمادبه‌نفس', 'رمزآلود بودن', 'شیطنت', 'شدت و حرارت'] } },
+      { id: 's13', prompt: { en: 'Their biggest secret fantasy theme?', fa: 'موضوع بزرگ‌ترین فانتزی مخفی‌شون؟' }, choices: { en: ['Role-play', 'Somewhere public', 'Being in charge', 'Losing control'], fa: ['رول‌پلی', 'یه جای عمومی', 'کنترل دست خودشون', 'از دست دادن کنترل'] } },
+      { id: 's14', prompt: { en: 'Morning or night person… in bed?', fa: 'آدم صبحی یا شبی… تو تخت؟' }, choices: { en: ['Morning', 'Late night', 'Afternoon', 'Any time, honestly'], fa: ['صبح', 'آخرشب', 'بعدازظهر', 'صادقانه هر وقت'] } },
+      { id: 's15', prompt: { en: 'Most likely reaction to a bold compliment?', fa: 'محتمل‌ترین واکنش به یه تعریف جسورانه؟' }, choices: { en: ['Blush hard', 'Fire one back', 'Get shy', 'Pretend to be cool'], fa: ['بدجور سرخ می‌شه', 'یکی داغ‌تر تحویل می‌ده', 'خجالتی می‌شه', 'ادای خونسردی درمیاره'] } },
+      { id: 's16', prompt: { en: 'Their weakness?', fa: 'نقطه‌ضعفشون؟' }, choices: { en: ['Neck kisses', 'Eye contact', 'A deep voice', 'Being teased'], fa: ['بوسهٔ گردن', 'تماس چشمی', 'یه صدای بم', 'سربه‌سر گذاشته شدن'] } },
+      { id: 's17', prompt: { en: 'Boldest thing they’d do on vacation?', fa: 'جسورانه‌ترین کاری که تو تعطیلات می‌کنن؟' }, choices: { en: ['Hook up with a stranger', 'Skinny dip', 'Kiss on the beach', 'Stay classy'], fa: ['با یه غریبه رابطه', 'شنای لخت', 'بوسه رو ساحل', 'باکلاس می‌مونن'] } },
+      { id: 's18', prompt: { en: 'Their flirt-to-serious ratio?', fa: 'نسبت لاس زدن به جدی بودنشون؟' }, choices: { en: ['All flirt', 'Mostly serious', 'Balanced', 'Flirts then vanishes'], fa: ['کاملاً لاس', 'بیشتر جدی', 'متعادل', 'لاس می‌زنه بعد غیب می‌شه'] } },
+      { id: 's19', prompt: { en: 'Ideal way to be seduced?', fa: 'راه ایده‌آل برای اغوا شدنشون؟' }, choices: { en: ['Words', 'Touch', 'A look', 'A surprise'], fa: ['با حرف', 'با لمس', 'با یه نگاه', 'با یه سورپرایز'] } },
+      { id: 's20', prompt: { en: 'Most likely to keep whose number secret?', fa: 'محتمل‌ترین شماره‌ای که مخفی نگه می‌دارن؟' }, choices: { en: ['An ex', 'A crush', 'A fling', 'They tell all'], fa: ['یه اکس', 'یه کراش', 'یه رابطهٔ گذرا', 'همه‌چیو می‌گن'] } },
+    ],
+  },
 ]
 
 export function getBondQuestions(packId: string): BondQuestion[] {

@@ -4,10 +4,10 @@ import type { LikelyHeat, LikelyMode } from './prompts'
 import { useSession } from '../../store/session'
 import { useT } from '../../i18n/useT'
 import { Button } from '../../components/ui/Button'
+import { OptionCard } from '../../components/ui/OptionCard'
 import { Screen } from '../../components/ui/Screen'
 import { Stepper } from '../../components/ui/Stepper'
 import { TopBar } from '../../components/ui/TopBar'
-import { cn } from '../../lib/cn'
 
 const MODES: LikelyMode[] = ['never', 'most']
 const HEATS: LikelyHeat[] = ['normal', 'spicy']
@@ -57,28 +57,19 @@ export function LikelySetup() {
         </p>
         <div className="grid grid-cols-1 gap-2">
           {MODES.map((m) => (
-            <button
+            <OptionCard
               key={m}
-              type="button"
-              onClick={() => setMode(m)}
-              className={cn(
-                'rounded-2xl border px-4 py-3 text-start transition-colors',
-                mode === m
-                  ? 'border-gold/50 bg-gold/15 text-fog'
-                  : 'border-fog/10 bg-ink/25 text-fog-dim hover:border-fog/20',
-              )}
-            >
-              <span className="block font-semibold text-fog">
-                {m === 'never'
-                  ? t('likely.setup.never')
-                  : t('likely.setup.most')}
-              </span>
-              <span className="mt-0.5 block text-xs text-fog-mute">
-                {m === 'never'
+              selected={mode === m}
+              onSelect={() => setMode(m)}
+              title={
+                m === 'never' ? t('likely.setup.never') : t('likely.setup.most')
+              }
+              hint={
+                m === 'never'
                   ? t('likely.setup.neverHint')
-                  : t('likely.setup.mostHint')}
-              </span>
-            </button>
+                  : t('likely.setup.mostHint')
+              }
+            />
           ))}
         </div>
 
@@ -87,30 +78,22 @@ export function LikelySetup() {
         </p>
         <div className="grid grid-cols-2 gap-2">
           {HEATS.map((h) => (
-            <button
+            <OptionCard
               key={h}
-              type="button"
-              onClick={() => setHeat(h)}
-              className={cn(
-                'rounded-2xl border px-4 py-3 text-start transition-colors',
-                heat === h
-                  ? h === 'spicy'
-                    ? 'border-spark/50 bg-spark/15 text-fog'
-                    : 'border-gold/50 bg-gold/15 text-fog'
-                  : 'border-fog/10 bg-ink/25 text-fog-dim hover:border-fog/20',
-              )}
-            >
-              <span className="block font-semibold text-fog">
-                {h === 'normal'
+              selected={heat === h}
+              onSelect={() => setHeat(h)}
+              accent={h === 'spicy' ? 'spark' : 'gold'}
+              title={
+                h === 'normal'
                   ? t('likely.setup.normal')
-                  : t('likely.setup.spicy')}
-              </span>
-              <span className="mt-0.5 block text-xs text-fog-mute">
-                {h === 'normal'
+                  : t('likely.setup.spicy')
+              }
+              hint={
+                h === 'normal'
                   ? t('likely.setup.normalHint')
-                  : t('likely.setup.spicyHint')}
-              </span>
-            </button>
+                  : t('likely.setup.spicyHint')
+              }
+            />
           ))}
         </div>
         <p className="text-xs text-fog-mute">

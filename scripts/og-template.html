@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700&family=Syne:wght@700;800&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    font-family: "Figtree", system-ui, sans-serif;
+    color: #eceef2;
+    background:
+      radial-gradient(ellipse 70% 45% at 50% -12%, rgb(61 222 176 / 0.16), transparent 65%),
+      radial-gradient(ellipse 90% 55% at 50% 125%, rgb(0 0 0 / 0.5), transparent 60%),
+      #0c0d10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 72px 84px 60px;
+    position: relative;
+  }
+  .noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    opacity: 0.05;
+  }
+  .brand { display: flex; align-items: center; gap: 30px; }
+  .brand svg { width: 108px; height: 108px; border-radius: 26px; box-shadow: 0 12px 44px rgb(61 222 176 / 0.14); }
+  .eyebrow {
+    font-size: 21px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #3ddeb0; margin-bottom: 6px;
+  }
+  h1 {
+    font-family: "Syne", sans-serif;
+    font-size: 118px; font-weight: 800; letter-spacing: -0.02em;
+    line-height: 0.95; color: #eceef2;
+  }
+  .tagline {
+    font-size: 36px; font-weight: 500; line-height: 1.35;
+    color: #a4a8b3; max-width: 1010px;
+  }
+  .tagline strong { color: #eceef2; font-weight: 700; }
+  .games { display: flex; flex-wrap: nowrap; gap: 12px; }
+  .chip {
+    font-family: "Syne", sans-serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    padding: 12px 21px; border-radius: 999px;
+    border: 1.5px solid rgb(236 238 242 / 0.12);
+    background: rgb(8 9 12 / 0.55);
+    white-space: nowrap;
+  }
+  .gold  { color: #f0c45a; }
+  .spark { color: #ff5a45; }
+  .mint  { color: #3ddeb0; }
+  .ember { color: #ff8a4c; }
+  .sky   { color: #5aa8d8; }
+  .rose  { color: #e87a9a; }
+</style>
+</head>
+<body>
+  
+  <div class="brand">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="64" height="64" rx="16" fill="#121316"/>
+      <path d="M14 42c9-14 27-14 36 0" stroke="#E2B03A" stroke-width="3.75" stroke-linecap="round"/>
+      <circle cx="18" cy="30" r="4.75" fill="#E8EEF8"/>
+      <circle cx="32" cy="22" r="4.75" fill="#3DDEB0"/>
+      <circle cx="46" cy="30" r="4.75" fill="#E8EEF8"/>
+    </svg>
+    <div>
+      <div class="eyebrow">Party games</div>
+      <h1>Pass</h1>
+    </div>
+  </div>
+
+  <div class="tagline">
+    Seven games for 2–12 friends. <strong>Pass one phone</strong> around the
+    table, or <strong>share a room link</strong> and play online.
+  </div>
+
+  <div class="games">
+    <span class="chip gold">Impostor</span>
+    <span class="chip mint">Spy</span>
+    <span class="chip spark">Fuse</span>
+    <span class="chip ember">Hot Seat</span>
+    <span class="chip sky">Story</span>
+    <span class="chip rose">Know You</span>
+    <span class="chip gold">Likely</span>
+  </div>
+</body>
+</html>

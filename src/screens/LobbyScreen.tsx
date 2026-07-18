@@ -25,6 +25,8 @@ const gameNameKey: Record<GameId, MessageKey> = {
   story: 'games.story.name',
   bond: 'games.bond.name',
   likely: 'games.likely.name',
+  act: 'games.act.name',
+  truthdare: 'games.truthdare.name',
 }
 
 export function LobbyScreen() {

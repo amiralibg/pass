@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pass.games/sitemap.xml
+Sitemap: https://pass.amiralibg.xyz/sitemap.xml

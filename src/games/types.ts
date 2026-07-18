@@ -8,6 +8,14 @@ export type GameId =
   | 'story'
   | 'bond'
   | 'likely'
+  | 'act'
+  | 'truthdare'
+
+/** Standard content heat tier — every game with an adult tier uses this. */
+export type Heat = 'normal' | 'spicy'
+
+/** How games are grouped on the home screen. */
+export type GameCategory = 'deduce' | 'active' | 'personal' | 'words'
 
 export interface Player {
   id: string
@@ -24,6 +32,7 @@ export interface GameDefinition {
   /** Suggested default when opening the lobby */
   defaultPlayers: number
   accent: 'gold' | 'spark' | 'mint' | 'ember' | 'sky' | 'rose'
+  category: GameCategory
   Setup: ComponentType
   Play: ComponentType
 }

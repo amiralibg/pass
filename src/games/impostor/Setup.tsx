@@ -6,16 +6,17 @@ import { useSession } from '../../store/session'
 import { useT } from '../../i18n/useT'
 import type { MessageKey } from '../../i18n/messages'
 import { Button } from '../../components/ui/Button'
+import { OptionCard } from '../../components/ui/OptionCard'
 import { Screen } from '../../components/ui/Screen'
 import { Stepper } from '../../components/ui/Stepper'
 import { TopBar } from '../../components/ui/TopBar'
-import { cn } from '../../lib/cn'
 
 const packNameKey: Record<string, MessageKey> = {
   everyday: 'packs.everyday',
   food: 'packs.food',
   places: 'packs.places',
   wild: 'packs.wild',
+  afterdark: 'packs.afterdark',
 }
 
 export function ImpostorSetup() {
@@ -77,24 +78,14 @@ export function ImpostorSetup() {
           {WORD_PACKS.map((pack) => {
             const wordCount = getPackWords(pack.id, locale).length
             return (
-              <button
+              <OptionCard
                 key={pack.id}
-                type="button"
-                onClick={() => setPackId(pack.id)}
-                className={cn(
-                  'rounded-2xl border px-4 py-3 text-start transition-colors',
-                  packId === pack.id
-                    ? 'border-gold/50 bg-gold/15 text-fog'
-                    : 'border-fog/10 bg-ink/25 text-fog-dim hover:border-fog/20',
-                )}
-              >
-                <span className="block font-semibold text-fog">
-                  {t(packNameKey[pack.id] ?? 'packs.everyday')}
-                </span>
-                <span className="mt-0.5 block text-xs text-fog-mute">
-                  {t('impostor.setup.wordsCount', { count: wordCount })}
-                </span>
-              </button>
+                selected={packId === pack.id}
+                onSelect={() => setPackId(pack.id)}
+                accent={pack.id === 'afterdark' ? 'spark' : 'gold'}
+                title={t(packNameKey[pack.id] ?? 'packs.everyday')}
+                hint={t('impostor.setup.wordsCount', { count: wordCount })}
+              />
             )
           })}
         </div>
